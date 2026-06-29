@@ -156,11 +156,12 @@ function CheckoutContent() {
             <Label className="text-[13px] font-semibold text-[var(--ink-700)]">SIM that receives the data</Label>
             <Input
               value={phone}
-              onChange={e => setPhone(e.target.value)}
+              onChange={e => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
               type="tel"
               inputMode="numeric"
               autoComplete="tel"
               placeholder="0XX XXX XXXX"
+              maxLength={10}
               className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
             />
             <span className="text-xs text-[var(--ink-500)]">Double-check this. We can&apos;t refund if you send it to the wrong number.</span>
@@ -169,11 +170,12 @@ function CheckoutContent() {
             <Label className="text-[13px] font-semibold text-[var(--ink-700)]">Confirm number</Label>
             <Input
               value={confirm}
-              onChange={e => setConfirm(e.target.value)}
+              onChange={e => setConfirm(e.target.value.replace(/\D/g, "").slice(0, 10))}
               type="tel"
               inputMode="numeric"
               autoComplete="tel"
               placeholder="0XX XXX XXXX"
+              maxLength={10}
               className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
             />
           </div>
