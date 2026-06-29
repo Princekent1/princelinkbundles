@@ -14,7 +14,6 @@ const NAV_ITEMS = [
   { id: "dashboard", label: "Dashboard", icon: "dashboard", href: "/vendor/dashboard" },
   { id: "orders",    label: "Orders",    icon: "list",      href: "/vendor/orders" },
   { id: "wallet",    label: "Wallet",    icon: "wallet",    href: "/vendor/wallet" },
-  { id: "settings",  label: "Settings",  icon: "settings",  href: "/vendor/settings" },
 ];
 
 interface VendorShellProps {
@@ -136,24 +135,40 @@ export function VendorShell({
           </Link>
         </div>
 
-        {whatsappUrl && (
-          <a
-            href={whatsappUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+        <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: 2 }}>
+          {whatsappUrl && (
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "flex", alignItems: "center", gap: 10,
+                padding: "10px 12px", borderRadius: 10,
+                textDecoration: "none",
+                background: "var(--ink-50)", color: "var(--ink-700)",
+                fontSize: 13, fontWeight: 600,
+              }}
+            >
+              <Icon name="whatsapp" size={16} />
+              <span style={{ flex: 1 }}>Join community</span>
+              <Icon name="ext" size={12} />
+            </a>
+          )}
+          <Link
+            href="/vendor/settings"
+            onClick={() => setMobileOpen(false)}
             style={{
-              display: "flex", alignItems: "center", gap: 10,
-              margin: "12px 0", padding: "10px 12px",
-              borderRadius: 10, textDecoration: "none",
-              background: "var(--ink-50)", color: "var(--ink-700)",
-              fontSize: 13, fontWeight: 600,
+              display: "flex", alignItems: "center", gap: 12,
+              padding: "10px 12px", borderRadius: 10,
+              background: pathname.startsWith("/vendor/settings") ? "var(--ink-200)" : "transparent",
+              color: pathname.startsWith("/vendor/settings") ? "var(--ink-900)" : "var(--ink-700)",
+              textDecoration: "none", fontSize: 14, fontWeight: 600,
             }}
           >
-            <Icon name="whatsapp" size={16} />
-            <span style={{ flex: 1 }}>Join community</span>
-            <Icon name="ext" size={12} />
-          </a>
-        )}
+            <Icon name="settings" size={18} />
+            <span>Settings</span>
+          </Link>
+        </div>
 
         <div style={{ padding: 12, borderTop: "1px solid var(--ink-200)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>

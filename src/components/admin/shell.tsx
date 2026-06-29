@@ -10,12 +10,11 @@ import { logout, getAdminNavCounts, getSiteConfig } from "@/api";
 import { useAuthStore } from "@/stores/auth";
 
 const NAV_ITEMS = [
-  { id: "dashboard", label: "Dashboard", icon: "dashboard", href: "/admin/dashboard" },
-  { id: "orders",    label: "Orders",    icon: "list",      href: "/admin/orders",   countKey: "pendingOrders" as const },
-  { id: "vendors",   label: "Vendors",   icon: "user",      href: "/admin/vendors",  countKey: "pendingVendors" as const },
-  { id: "bundles",      label: "Bundles",      icon: "package", href: "/admin/bundles" },
-  { id: "transactions", label: "Transactions", icon: "wallet",  href: "/admin/transactions" },
-  { id: "settings",     label: "Settings",     icon: "settings", href: "/admin/settings" },
+  { id: "dashboard",    label: "Dashboard",    icon: "dashboard", href: "/admin/dashboard" },
+  { id: "orders",       label: "Orders",       icon: "list",      href: "/admin/orders",       countKey: "pendingOrders" as const },
+  { id: "vendors",      label: "Vendors",      icon: "user",      href: "/admin/vendors",      countKey: "pendingVendors" as const },
+  { id: "bundles",      label: "Bundles",      icon: "package",   href: "/admin/bundles" },
+  { id: "transactions", label: "Transactions", icon: "wallet",    href: "/admin/transactions" },
 ];
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
@@ -118,24 +117,40 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           })}
         </nav>
 
-        {whatsappUrl && (
-          <a
-            href={whatsappUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+        <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: 2 }}>
+          {whatsappUrl && (
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "flex", alignItems: "center", gap: 10,
+                padding: "10px 12px", borderRadius: 10,
+                textDecoration: "none",
+                background: "var(--ink-50)", color: "var(--ink-700)",
+                fontSize: 13, fontWeight: 600,
+              }}
+            >
+              <Icon name="whatsapp" size={16} />
+              <span style={{ flex: 1 }}>Join community</span>
+              <Icon name="ext" size={12} />
+            </a>
+          )}
+          <Link
+            href="/admin/settings"
+            onClick={() => setMobileOpen(false)}
             style={{
-              display: "flex", alignItems: "center", gap: 10,
-              margin: "auto 0 12px", padding: "10px 12px",
-              borderRadius: 10, textDecoration: "none",
-              background: "var(--ink-50)", color: "var(--ink-700)",
-              fontSize: 13, fontWeight: 600,
+              display: "flex", alignItems: "center", gap: 12,
+              padding: "10px 12px", borderRadius: 10,
+              background: pathname.startsWith("/admin/settings") ? "var(--ink-200)" : "transparent",
+              color: pathname.startsWith("/admin/settings") ? "var(--ink-900)" : "var(--ink-700)",
+              textDecoration: "none", fontSize: 14, fontWeight: 600,
             }}
           >
-            <Icon name="whatsapp" size={16} />
-            <span style={{ flex: 1 }}>Join community</span>
-            <Icon name="ext" size={12} />
-          </a>
-        )}
+            <Icon name="settings" size={18} />
+            <span>Settings</span>
+          </Link>
+        </div>
 
         <div style={{ padding: 12, borderTop: "1px solid var(--ink-200)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
