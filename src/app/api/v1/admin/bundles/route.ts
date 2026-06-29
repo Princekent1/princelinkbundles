@@ -110,7 +110,7 @@ export const POST = async (req: Request) => {
 
     const bundle = await BundleModel.create({
       network,
-      name: deriveBundleName(volumeMb),
+      name: effectiveBundleName({ volumeMb }),
       volumeMb,
       validityDays,
       priceGhs,

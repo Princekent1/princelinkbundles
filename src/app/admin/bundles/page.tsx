@@ -126,7 +126,7 @@ export default function AdminBundlesPage() {
   });
 
   const { mutate: doEdit, isPending: isEditing } = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: { priceGhs?: number; vendorPriceGhs?: number | null; jaybartPackageId?: number | null; jaybartNetworkId?: number | null } }) =>
+    mutationFn: ({ id, data }: { id: string; data: { displayName?: string; priceGhs?: number; vendorPriceGhs?: number | null; jaybartPackageId?: number | null; jaybartNetworkId?: number | null } }) =>
       updateBundle.fn(id, data),
     onSuccess: () => {
       toast.success("Bundle updated");
