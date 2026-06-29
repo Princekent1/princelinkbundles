@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Icon } from "@/components/ui/icons";
+import { AdminShell } from "@/components/admin/shell";
 
 const EMPTY_FORM = {
   title: "",
@@ -176,6 +177,7 @@ export default function AnnouncementsPage() {
     isEditing;
 
   return (
+    <AdminShell>
     <div style={{ padding: "32px 28px", maxWidth: 900, margin: "0 auto" }}>
       <div className="flex items-center justify-between mb-6">
         <div>
@@ -470,5 +472,6 @@ export default function AnnouncementsPage() {
         onConfirm={() => doDelete()}
       />
     </div>
+    </AdminShell>
   );
 }
