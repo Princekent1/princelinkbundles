@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1760" height="300" viewBox="0 0 1760 300">
+  
+  <text x="20" y="206" font-family="Sora, sans-serif" font-weight="800" font-size="180" letter-spacing="-10" fill="#0c2f6e">P</text>
+  <svg x="128" y="58" width="72" height="135" viewBox="0 0 100 100"><polygon points="58,6 26,54 47,54 42,94 74,40 53,40" fill="#2f6bff"></polygon></svg>
+  <text x="200" y="206" font-family="Sora, sans-serif" font-weight="800" font-size="180" letter-spacing="-10" fill="#0c2f6e">K</text>
+  <text x="392" y="200" font-family="Sora, sans-serif" font-weight="700" font-size="150" letter-spacing="-4" fill="#0a1320">Prince <tspan fill="#2f6bff">K</tspan> Ventures</text>
+</svg>

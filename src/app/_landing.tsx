@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
@@ -137,19 +138,8 @@ export function LandingPage({ user }: { user: TokenPayload | null }) {
         style={{ background: "rgba(11,17,33,0.8)", backdropFilter: "blur(12px)", borderBottom: "1px solid rgba(30,41,59,1)" }}
       >
         <div className="flex justify-between items-center w-full max-w-[1200px] mx-auto px-10">
-          <Link href="/" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 10 }}>
-            <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-              style={{ background: "#2563eb" }}
-            >
-              <span className="text-white font-bold text-base leading-none">P</span>
-            </div>
-            <span
-              className="font-bold text-white text-lg"
-              style={{ fontFamily: "var(--font-space-grotesk), sans-serif", letterSpacing: "-0.02em" }}
-            >
-              Prince K Ventures
-            </span>
+          <Link href="/" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center" }}>
+            <Image src="/logo-lockup.png" alt="Prince K Ventures" height={32} width={135} priority style={{ objectFit: "contain", objectPosition: "left center" }} />
           </Link>
 
           <div className="flex items-center gap-1.5">

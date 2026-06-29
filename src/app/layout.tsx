@@ -24,12 +24,21 @@ export const metadata: Metadata = {
   title: "Prince K Ventures — Data bundles for Ghana",
   description: "Buy MTN, Telecel and AirtelTigo data bundles for any number in Ghana. No account needed. Secure Paystack checkout. Data delivered in minutes.",
   metadataBase: new URL("https://princekventures.com"),
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: { url: "/apple-touch-icon.png", sizes: "512x512" },
+  },
   openGraph: {
     title: "Prince K Ventures",
     description: "MTN, Telecel and AirtelTigo bundles. No account. 60-second checkout.",
     url: "https://princekventures.com",
     siteName: "Prince K Ventures",
-    images: [{ url: "/og-image.jpg", width: 1080, height: 1080, alt: "Prince K Ventures" }],
+    images: [{ url: "/og-image.png", width: 1024, height: 1024, alt: "Prince K Ventures" }],
     locale: "en_GH",
     type: "website",
   },
@@ -37,7 +46,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Prince K Ventures",
     description: "MTN, Telecel and AirtelTigo bundles. No account. 60-second checkout.",
-    images: ["/og-image.jpg"],
+    images: ["/og-image.png"],
   },
 };
 
