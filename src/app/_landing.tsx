@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -7,7 +8,8 @@ import { motion } from "motion/react";
 import { Icon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/stores/auth";
-import { logout, getPublicSettings, getPublicAnnouncements } from "@/api";
+import { logout, getPublicSettings, getPublicAnnouncements, getBundles } from "@/api";
+import { ghsp } from "@/lib/data";
 import { useQuery } from "@tanstack/react-query";
 import type { TokenPayload } from "@/lib/jwt";
 import { AnnouncementsCarousel } from "@/components/announcements-carousel";
@@ -22,13 +24,24 @@ function fadeUp(delay: number) {
   };
 }
 
+const NETWORKS = [
+  { id: "mtn",        label: "MTN" },
+  { id: "telecel",    label: "Telecel" },
+  { id: "airteltigo", label: "AirtelTigo" },
+];
+
 function QuickBuyWidget() {
-  const tabs = ["MTN", "Telecel", "AirtelTigo"];
-  const bundles = [
-    { vol: "1 GB",  days: "24 hours", price: "GHS 5",  popular: false },
-    { vol: "5 GB",  days: "7 days",   price: "GHS 28", popular: true  },
-    { vol: "10 GB", days: "30 days",  price: "GHS 55", popular: false },
-  ];
+  const router = useRouter();
+  const [activeNetwork, setActiveNetwork] = useState("mtn");
+
+  const { data, isLoading } = useQuery({
+    queryKey: getBundles.key(activeNetwork),
+    queryFn: () => getBundles.fn(activeNetwork),
+    staleTime: 5 * 60_000,
+  });
+
+  const bundles = (data?.bundles ?? []).slice(0, 4);
+  const networkLabel = NETWORKS.find(n => n.id === activeNetwork)?.label ?? "MTN";
 
   return (
     <div className="relative flex justify-center">
@@ -53,52 +66,57 @@ function QuickBuyWidget() {
         </div>
 
         <div className="flex mb-6" style={{ borderBottom: "1px solid rgba(71,85,105,0.8)" }}>
-          {tabs.map((tab, i) => (
+          {NETWORKS.map(net => (
             <button
-              key={tab}
+              key={net.id}
+              onClick={() => setActiveNetwork(net.id)}
               className="flex-1 pb-4 text-sm font-bold transition-colors"
-              style={i === 0
+              style={activeNetwork === net.id
                 ? { borderBottom: "2px solid #00e5ff", color: "#00e5ff" }
-                : { color: "#94a3b8" }}
+                : { color: "#94a3b8", cursor: "pointer" }}
             >
-              {tab}
+              {net.label}
             </button>
           ))}
         </div>
 
         <div className="space-y-3 mb-8">
-          {bundles.map((b) => (
-            <div
-              key={b.vol}
-              className="flex justify-between items-center p-4 rounded-lg cursor-pointer transition-all"
-              style={b.popular
-                ? { border: "2px solid #3b82f6", background: "rgba(29,78,216,0.15)", boxShadow: "inset 0 0 20px rgba(59,130,246,0.1)" }
-                : { border: "1px solid rgba(71,85,105,0.8)", background: "rgba(30,41,59,0.5)" }}
-            >
-              <div>
-                <p className="font-bold text-lg text-white">{b.vol}</p>
-                <p className="text-xs" style={{ color: b.popular ? "#bfdbfe" : "#94a3b8" }}>{b.days}</p>
-              </div>
-              <div className="text-right">
-                {b.popular && (
-                  <span
-                    className="text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider block mb-1"
-                    style={{ background: "#2563eb", color: "white" }}
-                  >
-                    Popular
-                  </span>
-                )}
-                <p className="font-bold" style={{ color: b.popular ? "#00e5ff" : "white" }}>{b.price}</p>
-              </div>
-            </div>
-          ))}
+          {isLoading
+            ? Array.from({ length: 3 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="animate-pulse rounded-lg"
+                  style={{ height: 64, background: "rgba(30,41,59,0.5)", border: "1px solid rgba(71,85,105,0.4)" }}
+                />
+              ))
+            : bundles.length === 0
+            ? (
+                <p className="text-center py-6 text-sm" style={{ color: "#94a3b8" }}>
+                  No bundles available
+                </p>
+              )
+            : bundles.map((b) => (
+                <div
+                  key={b._id}
+                  className="flex justify-between items-center p-4 rounded-lg"
+                  style={{ border: "1px solid rgba(71,85,105,0.8)", background: "rgba(30,41,59,0.5)" }}
+                >
+                  <div>
+                    <p className="font-bold text-lg text-white">{b.name}</p>
+                    <p className="text-xs" style={{ color: "#94a3b8" }}>{b.validity}</p>
+                  </div>
+                  <p className="font-bold text-white">{ghsp(b.priceGhs)}</p>
+                </div>
+              ))
+          }
         </div>
 
         <button
+          onClick={() => router.push(`/bundles/${activeNetwork}`)}
           className="w-full py-4 font-bold text-sm text-white rounded-lg flex justify-center items-center transition-all"
-          style={{ background: "#2563eb", boxShadow: "0 0 15px rgba(37,99,235,0.5)" }}
+          style={{ background: "#2563eb", boxShadow: "0 0 15px rgba(37,99,235,0.5)", cursor: "pointer" }}
         >
-          Buy 5 GB · GHS 28 →
+          Buy {networkLabel} bundle →
         </button>
       </div>
     </div>
