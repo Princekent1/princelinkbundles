@@ -26,6 +26,7 @@ import {
   createBundle,
   updateBundle,
   archiveBundle,
+  restoreBundle,
   getJaybartPackages,
   syncJaybartBundles,
   type AdminBundleItem,
@@ -147,6 +148,18 @@ export default function AdminBundlesPage() {
       invalidate();
     },
     onError: () => toast.error("Failed to archive bundle"),
+  });
+
+  const [restoreTarget, setRestoreTarget] = useState<AdminBundleItem | null>(null);
+
+  const { mutate: doRestore, isPending: isRestoring } = useMutation({
+    mutationFn: (id: string) => restoreBundle.fn(id),
+    onSuccess: () => {
+      toast.success("Bundle restored");
+      setRestoreTarget(null);
+      invalidate();
+    },
+    onError: () => toast.error("Failed to restore bundle"),
   });
 
   const [syncOpen, setSyncOpen] = useState(false);
@@ -391,9 +404,18 @@ export default function AdminBundlesPage() {
                     </TableCell>
                     <TableCell className="px-4 py-4 text-right whitespace-nowrap">
                       {b.archivedAt ? (
-                        <span className="text-xs text-[var(--ink-400)]">
-                          {new Date(b.archivedAt).toLocaleDateString("en-GH", { day: "numeric", month: "short", year: "numeric" })}
-                        </span>
+                        <div className="flex items-center justify-end gap-2">
+                          <span className="text-xs text-[var(--ink-400)]">
+                            {new Date(b.archivedAt).toLocaleDateString("en-GH", { day: "numeric", month: "short", year: "numeric" })}
+                          </span>
+                          <Button
+                            variant="ghost" size="sm"
+                            className="rounded-full text-[var(--brand-400)]"
+                            onClick={() => setRestoreTarget(b)}
+                          >
+                            Restore
+                          </Button>
+                        </div>
                       ) : (
                         <>
                           <Button
@@ -652,6 +674,16 @@ export default function AdminBundlesPage() {
           />
         </div>
       </ConfirmDialog>
+
+      <ConfirmDialog
+        open={restoreTarget !== null}
+        onOpenChange={open => { if (!open) setRestoreTarget(null); }}
+        title={`Restore ${restoreTarget?.name ?? "bundle"}?`}
+        description="This bundle will become live again and visible to buyers and vendors."
+        confirmLabel={isRestoring ? "Restoring…" : "Restore"}
+        confirmDisabled={isRestoring}
+        onConfirm={() => restoreTarget && doRestore(restoreTarget._id)}
+      />
     </AdminShell>
   );
 }

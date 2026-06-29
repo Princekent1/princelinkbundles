@@ -627,6 +627,17 @@ export const archiveBundle = {
   },
 };
 
+export const restoreBundle = {
+  fn: async (id: string): Promise<{ archivedAt: null }> => {
+    try {
+      const res = await apiClient.patch(`/api/v1/admin/bundles/${id}/restore`);
+      return res.data;
+    } catch (error) {
+      return throwError(error as ApiError);
+    }
+  },
+};
+
 // ─── Order Lookup ────────────────────────────────────────────────────────────
 
 export type OrderLookupResult = {
