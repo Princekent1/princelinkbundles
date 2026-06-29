@@ -263,7 +263,7 @@ export default function AdminBundlesPage() {
             {view === "active" && (
               <Button
                 onClick={() => setCreateOpen(true)}
-                className="rounded-full gap-1.5 bg-[var(--ink-900)] hover:bg-[var(--ink-800)]"
+                className="rounded-full gap-1.5 bg-[var(--brand-500)] hover:bg-[var(--brand-600)]"
               >
                 <Icon name="plus" size={14} /> New bundle
               </Button>
@@ -281,7 +281,7 @@ export default function AdminBundlesPage() {
               onClick={() => setView(tab.id)}
               className={`rounded-full px-3.5 py-1.5 h-auto text-xs font-semibold gap-1 whitespace-nowrap ${
                 view === tab.id
-                  ? "bg-[var(--ink-900)] text-white"
+                  ? "bg-[var(--ink-200)] text-[var(--ink-900)]"
                   : "bg-transparent text-[var(--ink-500)] hover:text-[var(--ink-700)] hover:bg-transparent"
               }`}
             >
@@ -297,7 +297,7 @@ export default function AdminBundlesPage() {
               onClick={() => setNet(n.id)}
               className={`rounded-full px-3.5 py-2 h-auto text-[13px] font-semibold gap-2 border ${
                 net === n.id
-                  ? "bg-[var(--ink-900)] text-white border-[var(--ink-900)] hover:bg-[var(--ink-800)]"
+                  ? "bg-[var(--brand-500)] text-white border-[var(--brand-500)] hover:bg-[var(--brand-600)]"
                   : "bg-[var(--ink-100)] text-[var(--ink-700)] border-[var(--ink-200)] hover:border-[var(--ink-300)]"
               }`}
             >
@@ -527,7 +527,7 @@ export default function AdminBundlesPage() {
           </div>
           <DialogFooter className="gap-2">
             <Button variant="outline" className="rounded-full" onClick={() => setCreateOpen(false)}>Cancel</Button>
-            <Button className="rounded-full bg-[var(--ink-900)] hover:bg-[var(--ink-800)]" disabled={isCreating} onClick={submitCreate}>
+            <Button className="rounded-full bg-[var(--brand-500)] hover:bg-[var(--brand-600)]" disabled={isCreating} onClick={submitCreate}>
               {isCreating ? "Creating…" : "Create bundle"}
             </Button>
           </DialogFooter>
@@ -610,7 +610,7 @@ export default function AdminBundlesPage() {
           <DialogFooter className="gap-2">
             <Button variant="outline" className="rounded-full" onClick={() => setEditBundle(null)}>Cancel</Button>
             <Button
-              className="rounded-full bg-[var(--ink-900)] hover:bg-[var(--ink-800)]"
+              className="rounded-full bg-[var(--brand-500)] hover:bg-[var(--brand-600)]"
               disabled={isEditing || !editPrice || isNaN(parseFloat(editPrice))}
               onClick={submitEdit}
             >

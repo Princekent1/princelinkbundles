@@ -215,7 +215,7 @@ export default function AdminSettingsPage() {
             <Button
               type="submit"
               disabled={isPending || !currentPassword || !newPassword || !confirmPassword}
-              className="rounded-full px-6 py-3.5 h-auto text-sm font-semibold self-start gap-2 bg-[var(--ink-900)] hover:bg-[var(--ink-800)] shadow-none disabled:opacity-50"
+              className="rounded-full px-6 py-3.5 h-auto text-sm font-semibold self-start gap-2 bg-[var(--brand-500)] hover:bg-[var(--brand-600)] shadow-none disabled:opacity-50"
             >
               {isPending ? "Updating…" : "Update password"}
             </Button>

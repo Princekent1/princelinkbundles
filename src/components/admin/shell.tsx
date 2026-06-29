@@ -91,8 +91,8 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                 style={{
                   display: "flex", alignItems: "center", gap: 12,
                   padding: "10px 12px", borderRadius: 10,
-                  background: active ? "var(--ink-900)" : "transparent",
-                  color: active ? "white" : "var(--ink-700)",
+                  background: active ? "var(--ink-200)" : "transparent",
+                  color: active ? "var(--ink-900)" : "var(--ink-700)",
                   textDecoration: "none", fontSize: 14, fontWeight: 600,
                 }}
               >

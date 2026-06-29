@@ -128,7 +128,7 @@ function VendorOrdersContent() {
                   onClick={() => setParam({ status: tab.value })}
                   className={`rounded-full px-3 md:px-3.5 py-1.5 h-auto text-xs font-semibold gap-0 whitespace-nowrap ${
                     status === tab.value
-                      ? "bg-[var(--ink-900)] text-white"
+                      ? "bg-[var(--ink-200)] text-[var(--ink-900)]"
                       : "bg-transparent text-[var(--ink-500)] hover:text-[var(--ink-700)] hover:bg-transparent"
                   }`}
                 >
@@ -144,7 +144,7 @@ function VendorOrdersContent() {
                   onClick={() => setParam({ paymentMethod: tab.value })}
                   className={`rounded-full px-3 md:px-3.5 py-1.5 h-auto text-xs font-semibold gap-0 whitespace-nowrap ${
                     paymentMethod === tab.value
-                      ? "bg-[var(--ink-900)] text-white"
+                      ? "bg-[var(--ink-200)] text-[var(--ink-900)]"
                       : "bg-transparent text-[var(--ink-500)] hover:text-[var(--ink-700)] hover:bg-transparent"
                   }`}
                 >
@@ -160,7 +160,7 @@ function VendorOrdersContent() {
                   onClick={() => setParam({ network: tab.value })}
                   className={`rounded-full px-3 md:px-3.5 py-1.5 h-auto text-xs font-semibold gap-0 whitespace-nowrap ${
                     network === tab.value
-                      ? "bg-[var(--ink-900)] text-white"
+                      ? "bg-[var(--ink-200)] text-[var(--ink-900)]"
                       : "bg-transparent text-[var(--ink-500)] hover:text-[var(--ink-700)] hover:bg-transparent"
                   }`}
                 >
@@ -181,7 +181,7 @@ function VendorOrdersContent() {
             />
             <Button
               onClick={handleSearch}
-              className="rounded-full px-3 py-1 h-auto text-xs font-semibold bg-[var(--ink-900)] text-white hover:bg-[var(--ink-700)]"
+              className="rounded-full px-3 py-1 h-auto text-xs font-semibold bg-[var(--ink-200)] text-[var(--ink-900)] hover:bg-[var(--ink-700)]"
             >
               Search
             </Button>

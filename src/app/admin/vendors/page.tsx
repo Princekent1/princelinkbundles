@@ -105,7 +105,7 @@ function AdminVendorsContent() {
                   onClick={() => push({ status: tab.id })}
                   className={`rounded-full px-3.5 py-1.5 h-auto text-xs font-semibold gap-0 whitespace-nowrap ${
                     active
-                      ? "bg-[var(--ink-900)] text-white"
+                      ? "bg-[var(--ink-200)] text-[var(--ink-900)]"
                       : "bg-transparent text-[var(--ink-500)] hover:text-[var(--ink-700)] hover:bg-transparent"
                   }`}
                 >
@@ -126,7 +126,7 @@ function AdminVendorsContent() {
             />
             <Button
               onClick={submitSearch}
-              className="rounded-full px-3 py-1 h-auto text-xs font-semibold bg-[var(--ink-900)] text-white hover:bg-[var(--ink-700)]"
+              className="rounded-full px-3 py-1 h-auto text-xs font-semibold bg-[var(--ink-200)] text-[var(--ink-900)] hover:bg-[var(--ink-700)]"
             >
               Search
             </Button>

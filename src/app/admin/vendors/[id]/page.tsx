@@ -190,7 +190,7 @@ export default function AdminVendorDetailPage({ params }: { params: Promise<{ id
               <Button
                 disabled={newPwd.length < 8 || newPwd !== confirmPwd || isChangingPwd}
                 onClick={() => doChangePassword()}
-                className="rounded-xl px-5 py-3 h-auto text-[13px] font-semibold bg-[var(--ink-900)] hover:bg-[var(--ink-800)] disabled:bg-[var(--ink-200)] disabled:text-[var(--ink-400)]"
+                className="rounded-xl px-5 py-3 h-auto text-[13px] font-semibold bg-[var(--brand-500)] hover:bg-[var(--brand-600)] disabled:bg-[var(--ink-200)] disabled:text-[var(--ink-400)]"
               >
                 {isChangingPwd ? "Saving…" : "Update"}
               </Button>
@@ -235,7 +235,7 @@ export default function AdminVendorDetailPage({ params }: { params: Promise<{ id
               <Button
                 disabled={!adjValid || isApplying}
                 onClick={() => applyAdjustment()}
-                className="rounded-xl px-5 py-3 h-auto text-[13px] font-semibold bg-[var(--ink-900)] hover:bg-[var(--ink-800)] disabled:bg-[var(--ink-200)] disabled:text-[var(--ink-400)]"
+                className="rounded-xl px-5 py-3 h-auto text-[13px] font-semibold bg-[var(--brand-500)] hover:bg-[var(--brand-600)] disabled:bg-[var(--ink-200)] disabled:text-[var(--ink-400)]"
               >
                 Apply
               </Button>

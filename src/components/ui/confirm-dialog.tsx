@@ -61,7 +61,7 @@ export function ConfirmDialog({
             className={`rounded-full px-6 font-semibold ${
               variant === "destructive"
                 ? "bg-[var(--err)] hover:bg-[var(--err)]/90 text-white"
-                : "bg-[var(--ink-900)] hover:bg-[var(--ink-800)] text-white"
+                : "bg-[var(--brand-500)] hover:bg-[var(--brand-600)] text-white"
             } disabled:bg-[var(--ink-200)] disabled:text-[var(--ink-400)]`}
           >
             {confirmLabel}

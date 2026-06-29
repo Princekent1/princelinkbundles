@@ -82,7 +82,7 @@ export default function AdminDashboardPage() {
                 <Icon name="package" size={14} /> New bundle
               </Link>
             </Button>
-            <Button asChild className="rounded-full gap-1.5 bg-[var(--ink-900)] hover:bg-[var(--ink-800)]">
+            <Button asChild className="rounded-full gap-1.5 bg-[var(--brand-500)] hover:bg-[var(--brand-600)] text-white">
               <Link href="/admin/orders">
                 View pending ({isLoading ? "…" : pendingCount}) <Icon name="arrow-right" size={14} />
               </Link>
@@ -94,7 +94,7 @@ export default function AdminDashboardPage() {
           {[
             { label: "Pending orders",    value: isLoading ? "—" : String(pendingCount),                  accent: "var(--bh-accent-500)" },
             { label: "Today's revenue",   value: isLoading ? "—" : ghsp(dashboard?.todayRevenue ?? 0),    accent: "var(--brand-500)" },
-            { label: "Paid orders today", value: isLoading ? "—" : String(dashboard?.ordersToday ?? 0),   accent: "var(--ink-900)" },
+            { label: "Paid orders today", value: isLoading ? "—" : String(dashboard?.ordersToday ?? 0),   accent: "var(--ink-500)" },
             { label: "All-time revenue",  value: isLoading ? "—" : ghsp(dashboard?.allTimeRevenue ?? 0),  accent: "var(--ok)" },
           ].map((s) => (
             <Card key={s.label} className="p-4 md:p-6 gap-0 rounded-2xl border-[var(--ink-200)] relative overflow-hidden">
@@ -153,7 +153,7 @@ export default function AdminDashboardPage() {
                     onClick={() => setPeriod(t)}
                     className={`rounded-full px-2.5 py-1 h-auto text-xs font-semibold gap-0 ${
                       period === t
-                        ? "bg-[var(--ink-900)] text-white hover:bg-[var(--ink-800)]"
+                        ? "bg-[var(--ink-200)] text-[var(--ink-900)] hover:bg-[var(--ink-300)]"
                         : "bg-transparent text-[var(--ink-500)] hover:bg-transparent hover:text-[var(--ink-700)]"
                     }`}
                   >

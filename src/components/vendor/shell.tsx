@@ -97,8 +97,8 @@ export function VendorShell({
                 style={{
                   display: "flex", alignItems: "center", gap: 12,
                   padding: "10px 12px", borderRadius: 10,
-                  background: active ? "var(--ink-900)" : "transparent",
-                  color: active ? "white" : "var(--ink-700)",
+                  background: active ? "var(--ink-200)" : "transparent",
+                  color: active ? "var(--ink-900)" : "var(--ink-700)",
                   textDecoration: "none", fontSize: 14, fontWeight: 600,
                 }}
               >
@@ -111,7 +111,7 @@ export function VendorShell({
 
         <div style={{
           margin: "16px 0", padding: 14,
-          background: "linear-gradient(135deg, var(--brand-500) 0%, var(--ink-900) 100%)",
+          background: "linear-gradient(135deg, var(--brand-500) 0%, var(--ink-200) 100%)",
           borderRadius: 14, color: "white",
         }}>
           <div style={{ fontSize: 11, fontWeight: 600, opacity: 0.75, textTransform: "uppercase", letterSpacing: 0.5 }}>Wallet balance</div>

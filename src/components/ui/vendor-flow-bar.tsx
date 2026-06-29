@@ -17,7 +17,7 @@ export function VendorFlowBar() {
   if (!user || user.role !== "vendor" || user.status !== "approved") return null;
 
   return (
-    <div className="sticky top-0 z-50 bg-[var(--ink-900)] text-white px-4 sm:px-6 py-2.5 flex items-center justify-between text-[13px]">
+    <div className="sticky top-0 z-50 bg-[var(--brand-500)] text-white px-4 sm:px-6 py-2.5 flex items-center justify-between text-[13px]">
       <span className="text-white/50 font-medium truncate mr-4">{user.businessName ?? user.email}</span>
       <div className="flex items-center gap-4 shrink-0">
         <span className="bh-mono font-semibold">{ghsp(user.walletBalance)}</span>

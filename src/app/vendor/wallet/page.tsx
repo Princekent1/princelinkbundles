@@ -100,7 +100,7 @@ function WalletPageContent() {
 
         <div
           className="p-5 md:p-7 rounded-[20px] text-white mb-6 flex flex-wrap items-center justify-between gap-4"
-          style={{ background: "linear-gradient(135deg, var(--brand-500) 0%, var(--ink-900) 100%)" }}
+          style={{ background: "linear-gradient(135deg, var(--brand-500) 0%, var(--ink-200) 100%)" }}
         >
           <div>
             <div className="text-xs font-semibold opacity-75 uppercase tracking-wide mb-1.5">Current balance</div>

@@ -78,7 +78,7 @@ function TransactionsContent() {
               onClick={() => push({ type: type === c.key ? undefined : c.key })}
               className={`text-left p-4 md:p-5 rounded-2xl border relative overflow-hidden transition-colors cursor-pointer ${
                 type === c.key
-                  ? "border-[var(--ink-900)] bg-[var(--ink-50)]"
+                  ? "border-[var(--brand-500)] bg-[var(--ink-50)]"
                   : "border-[var(--ink-200)] bg-[var(--ink-100)] hover:border-[var(--ink-400)]"
               }`}
             >

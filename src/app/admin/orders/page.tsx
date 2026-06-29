@@ -228,13 +228,13 @@ function AdminOrdersContent() {
                 onClick={() => push({ status: t.id })}
                 className={`px-3 md:px-3.5 py-2.5 border-0 bg-transparent cursor-pointer border-b-2 -mb-px text-sm font-semibold flex items-center gap-2 transition-colors whitespace-nowrap ${
                   active
-                    ? "border-[var(--ink-900)] text-[var(--ink-900)]"
+                    ? "border-[var(--brand-500)] text-[var(--ink-900)]"
                     : "border-transparent text-[var(--ink-500)] hover:text-[var(--ink-700)]"
                 }`}
               >
                 {t.label}
                 <Badge className={`text-[11px] px-1.5 py-0 h-auto rounded-full border-transparent ${
-                  active ? "bg-[var(--ink-900)] text-white" : "bg-[var(--ink-200)] text-[var(--ink-700)]"
+                  active ? "bg-[var(--ink-200)] text-[var(--ink-900)]" : "bg-[var(--ink-200)] text-[var(--ink-700)]"
                 }`}>
                   {count ?? 0}
                 </Badge>
@@ -344,7 +344,7 @@ function AdminOrdersContent() {
                           </Button>
                           <Button
                             onClick={() => setConfirmOrder(o)}
-                            className="rounded-full px-3.5 py-2 h-auto text-[13px] font-semibold gap-1.5 bg-[var(--ink-900)] hover:bg-[var(--ink-800)] whitespace-nowrap"
+                            className="rounded-full px-3.5 py-2 h-auto text-[13px] font-semibold gap-1.5 bg-[var(--brand-500)] hover:bg-[var(--brand-600)] whitespace-nowrap"
                             size="sm"
                           >
                             <Icon name="check" size={14} /> Send bundle
