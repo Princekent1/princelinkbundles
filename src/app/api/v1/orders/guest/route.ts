@@ -4,7 +4,7 @@ import connectMongo from "@/lib/mongo";
 const log = createLogger("orders:guest")
 import { BundleModel } from "@/lib/models/bundle";
 import { OrderModel } from "@/lib/models/order";
-import { deriveBundleName } from "@/lib/bundle-name";
+import { effectiveBundleName } from "@/lib/bundle-name";
 import { initializeTransaction } from "@/lib/paystack";
 import { getSettings } from "@/lib/models/settings";
 import { calculatePaystackFee } from "@/lib/paystack-fees";
@@ -55,7 +55,7 @@ export const POST = async (req: Request) => {
       customerPhone: customerPhone.replace(/\s/g, ""),
       customerEmail: customerEmail?.trim() || null,
       bundleId: bundle._id,
-      bundleNameSnapshot: deriveBundleName(bundle.volumeMb),
+      bundleNameSnapshot: effectiveBundleName(bundle),
       networkSnapshot: bundle.network,
       amountGhs: bundle.priceGhs,
       priceType: "public",

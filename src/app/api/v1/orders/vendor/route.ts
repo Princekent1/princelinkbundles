@@ -6,7 +6,7 @@ import { BundleModel, effectiveVendorPrice } from "@/lib/models/bundle";
 import { OrderModel } from "@/lib/models/order";
 import { UserModel } from "@/lib/models/user";
 import { WalletTransactionModel } from "@/lib/models/wallet-transaction";
-import { deriveBundleName } from "@/lib/bundle-name";
+import { effectiveBundleName } from "@/lib/bundle-name";
 import { getAuthUser } from "@/lib/get-auth-user";
 import { createErrorResponse } from "@/lib/errors";
 import { getSettings } from "@/lib/models/settings";
@@ -77,7 +77,7 @@ export const POST = async (req: Request) => {
         paymentMethod: "wallet",
         customerPhone: customerPhone.replace(/\s/g, ""),
         bundleId: bundle._id,
-        bundleNameSnapshot: deriveBundleName(bundle.volumeMb),
+        bundleNameSnapshot: effectiveBundleName(bundle),
         networkSnapshot: bundle.network,
         amountGhs: price,
         priceType: "vendor",
@@ -113,7 +113,7 @@ export const POST = async (req: Request) => {
     return Response.json(
       {
         reference: order.reference,
-        bundleName: deriveBundleName(bundle.volumeMb),
+        bundleName: effectiveBundleName(bundle),
         network: bundle.network,
         validityDays: bundle.validityDays,
         amountGhs: price,

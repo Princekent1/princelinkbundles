@@ -11,6 +11,7 @@ export type Bundle = {
   jaybartPackageId?: number | null;
   jaybartNetworkId?: number | null;
   jaybartCostGhs?: number | null; // pesewas — what Jaybart charges (console_price × 100)
+  displayName?: string | null;
   archivedAt?: Date | null;
   archivedBy?: mongoose.Types.ObjectId | null;
   createdAt?: Date;
@@ -33,6 +34,7 @@ const schema = new mongoose.Schema<Bundle>(
     jaybartPackageId: { type: Number, default: null },
     jaybartNetworkId: { type: Number, default: null },
     jaybartCostGhs: { type: Number, default: null }, // pesewas
+    displayName: { type: String, default: null },
     archivedAt: { type: Date, default: null },
     archivedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
   },

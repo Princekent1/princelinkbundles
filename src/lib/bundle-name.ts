@@ -3,6 +3,10 @@ export function deriveBundleName(volumeMb: number): string {
   return `${parseFloat(gb.toFixed(2))} GB`;
 }
 
+export function effectiveBundleName(bundle: { volumeMb: number; displayName?: string | null }): string {
+  return bundle.displayName?.trim() || deriveBundleName(bundle.volumeMb);
+}
+
 export function formatValidity(days: number): string {
   if (days === 1) return "24 hours";
   if (days % 30 === 0) return `${days / 30} month${days / 30 > 1 ? "s" : ""}`;

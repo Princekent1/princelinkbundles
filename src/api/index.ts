@@ -547,6 +547,7 @@ export type AdminBundleItem = {
   _id: string;
   network: string;
   name: string;
+  displayName: string;
   volumeMb: number;
   validityDays: number;
   priceGhs: number;
@@ -606,7 +607,7 @@ export const createBundle = {
 };
 
 export const updateBundle = {
-  fn: async (id: string, data: { priceGhs?: number; vendorPriceGhs?: number | null; jaybartPackageId?: number | null; jaybartNetworkId?: number | null }): Promise<AdminBundleItem> => {
+  fn: async (id: string, data: { priceGhs?: number; vendorPriceGhs?: number | null; jaybartPackageId?: number | null; jaybartNetworkId?: number | null; displayName?: string }): Promise<AdminBundleItem> => {
     try {
       const res = await apiClient.patch(`/api/v1/admin/bundles/${id}`, data);
       return res.data;

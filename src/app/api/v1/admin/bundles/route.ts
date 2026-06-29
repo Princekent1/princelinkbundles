@@ -1,7 +1,7 @@
 import { createErrorResponse } from "@/lib/errors";
 import { getAuthUser } from "@/lib/get-auth-user";
 import { BundleModel } from "@/lib/models/bundle";
-import { deriveBundleName } from "@/lib/bundle-name";
+import { effectiveBundleName } from "@/lib/bundle-name";
 import connectMongo from "@/lib/mongo";
 import { type NextRequest } from "next/server";
 
@@ -50,7 +50,8 @@ export const GET = async (req: NextRequest) => {
       bundles: bundles.map((b) => ({
         _id: b._id.toString(),
         network: b.network,
-        name: deriveBundleName(b.volumeMb),
+        name: effectiveBundleName(b),
+        displayName: b.displayName ?? "",
         volumeMb: b.volumeMb,
         validityDays: b.validityDays,
         priceGhs: b.priceGhs,
@@ -123,7 +124,8 @@ export const POST = async (req: Request) => {
       {
         _id: bundle._id.toString(),
         network: bundle.network,
-        name: deriveBundleName(bundle.volumeMb),
+        name: effectiveBundleName(bundle),
+        displayName: bundle.displayName ?? "",
         volumeMb: bundle.volumeMb,
         validityDays: bundle.validityDays,
         priceGhs: bundle.priceGhs,

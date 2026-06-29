@@ -89,6 +89,7 @@ export default function AdminBundlesPage() {
   const [createForm, setCreateForm] = useState<CreateForm>(EMPTY_FORM);
 
   const [editBundle, setEditBundle] = useState<AdminBundleItem | null>(null);
+  const [editDisplayName, setEditDisplayName] = useState("");
   const [editPrice, setEditPrice] = useState("");
   const [editVendorPrice, setEditVendorPrice] = useState("");
   const [editJaybartId, setEditJaybartId] = useState("");
@@ -241,6 +242,7 @@ export default function AdminBundlesPage() {
     doEdit({
       id: editBundle._id,
       data: {
+        displayName: editDisplayName,
         priceGhs,
         vendorPriceGhs,
         ...(jaybartPackageId !== undefined ? { jaybartPackageId, jaybartNetworkId: resolvedNetworkId } : {}),
@@ -250,6 +252,7 @@ export default function AdminBundlesPage() {
 
   function openEdit(b: AdminBundleItem) {
     setEditBundle(b);
+    setEditDisplayName(b.displayName ?? "");
     setEditPrice(String(b.priceGhs / 100));
     setEditVendorPrice(b.vendorPriceGhs != null ? String(b.vendorPriceGhs / 100) : "");
     setEditJaybartId(b.jaybartPackageId != null ? String(b.jaybartPackageId) : "");
@@ -557,7 +560,7 @@ export default function AdminBundlesPage() {
       </Dialog>
 
       {/* Edit dialog */}
-      <Dialog open={editBundle !== null} onOpenChange={open => { if (!open) { setEditBundle(null); setEditPrice(""); setEditJaybartId(""); } }}>
+      <Dialog open={editBundle !== null} onOpenChange={open => { if (!open) { setEditBundle(null); setEditDisplayName(""); setEditPrice(""); setEditJaybartId(""); } }}>
         <DialogContent className="max-w-[400px] rounded-2xl">
           <DialogHeader>
             <DialogTitle className="bh-display text-[20px]">Edit bundle</DialogTitle>
@@ -575,6 +578,16 @@ export default function AdminBundlesPage() {
                 <div className="ml-auto bh-mono text-sm font-bold text-[var(--ink-500)]">
                   {ghsp(editBundle.priceGhs)}
                 </div>
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label className="text-[13px] font-semibold">Display name</Label>
+                <Input
+                  placeholder={editBundle.name}
+                  value={editDisplayName}
+                  onChange={e => setEditDisplayName(e.target.value)}
+                  className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-[15px]"
+                />
+                <p className="text-[12px] text-[var(--ink-500)] m-0">Leave blank to use the auto-generated name.</p>
               </div>
               <div className="flex gap-3">
                 <div className="flex-1 flex flex-col gap-1.5">

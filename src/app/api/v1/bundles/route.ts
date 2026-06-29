@@ -1,6 +1,6 @@
 import connectMongo from "@/lib/mongo";
 import { BundleModel } from "@/lib/models/bundle";
-import { deriveBundleName, formatValidity } from "@/lib/bundle-name";
+import { effectiveBundleName, formatValidity } from "@/lib/bundle-name";
 import { getAuthUser } from "@/lib/get-auth-user";
 import { type NextRequest } from "next/server";
 
@@ -25,7 +25,7 @@ export const GET = async (req: NextRequest) => {
       bundles: bundles.map((b) => ({
         _id: b._id.toString(),
         network: b.network,
-        name: deriveBundleName(b.volumeMb),
+        name: effectiveBundleName(b),
         validity: formatValidity(b.validityDays),
         validityDays: b.validityDays,
         priceGhs: b.priceGhs,
