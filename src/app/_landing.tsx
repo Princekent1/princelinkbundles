@@ -40,7 +40,7 @@ function QuickBuyWidget() {
     staleTime: 5 * 60_000,
   });
 
-  const bundles = (data?.bundles ?? []).slice(0, 4);
+  const bundles = (data?.bundles ?? []).slice(0, 3);
   const networkLabel = NETWORKS.find(n => n.id === activeNetwork)?.label ?? "MTN";
 
   return (
