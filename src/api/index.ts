@@ -971,3 +971,111 @@ export const getAdminTransactions = {
     }
   },
 };
+
+export type AnnouncementItem = {
+  _id: string;
+  title: string;
+  body: string | null;
+  ctaLabel: string | null;
+  ctaUrl: string | null;
+  audience: ("public" | "vendor")[];
+  isActive: boolean;
+  createdAt: string;
+};
+
+export type PublicAnnouncementItem = {
+  _id: string;
+  title: string;
+  body: string | null;
+  ctaLabel: string | null;
+  ctaUrl: string | null;
+};
+
+export const getAdminAnnouncements = {
+  key: (status?: "active" | "hidden") => ["admin", "announcements", status ?? "active"],
+  fn: async (status: "active" | "hidden" = "active"): Promise<{
+    announcements: AnnouncementItem[];
+    counts: { active: number; hidden: number };
+  }> => {
+    try {
+      const res = await apiClient.get(
+        `/api/v1/admin/announcements?status=${status}`
+      );
+      return res.data;
+    } catch (error) {
+      return throwError(error as ApiError);
+    }
+  },
+};
+
+export type CreateAnnouncementInput = {
+  title: string;
+  body?: string;
+  ctaLabel?: string;
+  ctaUrl?: string;
+  audience: ("public" | "vendor")[];
+  isActive?: boolean;
+};
+
+export const createAnnouncement = {
+  fn: async (input: CreateAnnouncementInput): Promise<AnnouncementItem> => {
+    try {
+      const res = await apiClient.post("/api/v1/admin/announcements", input);
+      return res.data;
+    } catch (error) {
+      return throwError(error as ApiError);
+    }
+  },
+};
+
+export const updateAnnouncement = {
+  fn: async (
+    id: string,
+    input: Partial<CreateAnnouncementInput & { isActive: boolean }>
+  ): Promise<AnnouncementItem> => {
+    try {
+      const res = await apiClient.patch(
+        `/api/v1/admin/announcements/${id}`,
+        input
+      );
+      return res.data;
+    } catch (error) {
+      return throwError(error as ApiError);
+    }
+  },
+};
+
+export const deleteAnnouncement = {
+  fn: async (id: string): Promise<{ deleted: boolean }> => {
+    try {
+      const res = await apiClient.delete(`/api/v1/admin/announcements/${id}`);
+      return res.data;
+    } catch (error) {
+      return throwError(error as ApiError);
+    }
+  },
+};
+
+export const getPublicAnnouncements = {
+  key: ["announcements", "public"],
+  fn: async (): Promise<{ announcements: PublicAnnouncementItem[] }> => {
+    try {
+      const res = await apiClient.get("/api/v1/announcements/public");
+      return res.data;
+    } catch {
+      return { announcements: [] };
+    }
+  },
+};
+
+export const getVendorAnnouncements = {
+  key: ["announcements", "vendor"],
+  fn: async (): Promise<{ announcements: PublicAnnouncementItem[] }> => {
+    try {
+      const res = await apiClient.get("/api/v1/announcements/vendor");
+      return res.data;
+    } catch {
+      return { announcements: [] };
+    }
+  },
+};

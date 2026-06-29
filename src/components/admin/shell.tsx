@@ -10,11 +10,12 @@ import { logout, getAdminNavCounts, getSiteConfig } from "@/api";
 import { useAuthStore } from "@/stores/auth";
 
 const NAV_ITEMS = [
-  { id: "dashboard",    label: "Dashboard",    icon: "dashboard", href: "/admin/dashboard" },
-  { id: "orders",       label: "Orders",       icon: "list",      href: "/admin/orders",       countKey: "pendingOrders" as const },
-  { id: "vendors",      label: "Vendors",      icon: "user",      href: "/admin/vendors",      countKey: "pendingVendors" as const },
-  { id: "bundles",      label: "Bundles",      icon: "package",   href: "/admin/bundles" },
-  { id: "transactions", label: "Transactions", icon: "wallet",    href: "/admin/transactions" },
+  { id: "dashboard",     label: "Dashboard",     icon: "dashboard", href: "/admin/dashboard" },
+  { id: "orders",        label: "Orders",        icon: "list",      href: "/admin/orders",       countKey: "pendingOrders" as const },
+  { id: "vendors",       label: "Vendors",       icon: "user",      href: "/admin/vendors",      countKey: "pendingVendors" as const },
+  { id: "bundles",       label: "Bundles",       icon: "package",   href: "/admin/bundles" },
+  { id: "transactions",  label: "Transactions",  icon: "wallet",    href: "/admin/transactions" },
+  { id: "announcements", label: "Announcements", icon: "bell",      href: "/admin/announcements" },
 ];
 
 export function AdminShell({ children }: { children: React.ReactNode }) {

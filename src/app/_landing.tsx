@@ -7,9 +7,10 @@ import { motion } from "motion/react";
 import { Icon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/stores/auth";
-import { logout, getPublicSettings } from "@/api";
+import { logout, getPublicSettings, getPublicAnnouncements } from "@/api";
 import { useQuery } from "@tanstack/react-query";
 import type { TokenPayload } from "@/lib/jwt";
+import { AnnouncementsCarousel } from "@/components/announcements-carousel";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -381,6 +382,11 @@ export function LandingPage({ user }: { user: TokenPayload | null }) {
           </nav>
         </div>
       </footer>
+
+      <AnnouncementsCarousel
+        queryKey={getPublicAnnouncements.key}
+        queryFn={getPublicAnnouncements.fn}
+      />
     </div>
   );
 }

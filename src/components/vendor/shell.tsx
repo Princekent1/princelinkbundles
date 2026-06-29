@@ -6,9 +6,10 @@ import { usePathname, useRouter } from "next/navigation";
 import { Wordmark } from "@/components/ui/wordmark";
 import { Icon } from "@/components/ui/icons";
 import { ghsp } from "@/lib/data";
-import { logout, getSiteConfig } from "@/api";
+import { logout, getSiteConfig, getVendorAnnouncements } from "@/api";
 import { useQuery } from "@tanstack/react-query";
 import { useAuthStore } from "@/stores/auth";
+import { AnnouncementsCarousel } from "@/components/announcements-carousel";
 
 const NAV_ITEMS = [
   { id: "dashboard", label: "Dashboard", icon: "dashboard", href: "/vendor/dashboard" },
@@ -213,6 +214,11 @@ export function VendorShell({
           {children}
         </main>
       </div>
+
+      <AnnouncementsCarousel
+        queryKey={getVendorAnnouncements.key}
+        queryFn={getVendorAnnouncements.fn}
+      />
     </div>
   );
 }
