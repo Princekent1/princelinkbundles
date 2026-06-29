@@ -110,7 +110,7 @@ function CheckoutContent() {
   const isPending = guestPending || vendorPending;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[var(--ink-50)]">
       <VendorFlowBar />
       <div className="max-w-[480px] mx-auto px-6 pb-[120px]">
         <div className="pt-6">
@@ -161,7 +161,7 @@ function CheckoutContent() {
               inputMode="numeric"
               autoComplete="tel"
               placeholder="0XX XXX XXXX"
-              className="h-auto rounded-xl border-[var(--ink-200)] bg-white px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
+              className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
             />
             <span className="text-xs text-[var(--ink-500)]">Double-check this. We can&apos;t refund if you send it to the wrong number.</span>
           </div>
@@ -174,7 +174,7 @@ function CheckoutContent() {
               inputMode="numeric"
               autoComplete="tel"
               placeholder="0XX XXX XXXX"
-              className="h-auto rounded-xl border-[var(--ink-200)] bg-white px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
+              className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
             />
           </div>
           {!authLoading && !isVendor && (
@@ -188,7 +188,7 @@ function CheckoutContent() {
                 type="email"
                 autoComplete="email"
                 placeholder="you@example.com"
-                className="h-auto rounded-xl border-[var(--ink-200)] bg-white px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
+                className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
               />
             </div>
           )}
@@ -219,7 +219,7 @@ function CheckoutContent() {
         </div>
       </div>
 
-      <div className="fixed left-0 right-0 bottom-0 p-4 bg-white border-t border-[var(--ink-200)] flex flex-col items-center">
+      <div className="fixed left-0 right-0 bottom-0 p-4 bg-[var(--ink-100)] border-t border-[var(--ink-200)] flex flex-col items-center">
         <div className="w-full max-w-[448px]">
           <Button
             onClick={handleSubmit}

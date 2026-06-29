@@ -55,7 +55,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[var(--ink-50)]">
       <div className="max-w-[480px] mx-auto px-6 pt-10 pb-16">
         <div className="mb-8">
           <Wordmark small />
@@ -81,7 +81,7 @@ export default function LoginPage() {
                     {...field}
                     autoComplete="username"
                     placeholder="you@example.com or 0XX XXX XXXX"
-                    className="h-auto rounded-xl border-[var(--ink-200)] bg-white px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
+                    className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
                   />
                   {fieldState.error && (
                     <span className="text-xs text-red-500">{fieldState.error.message}</span>
@@ -103,7 +103,7 @@ export default function LoginPage() {
                     {...field}
                     autoComplete="current-password"
                     placeholder="••••••••"
-                    className="h-auto rounded-xl border-[var(--ink-200)] bg-white px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
+                    className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
                   />
                   {fieldState.error && (
                     <span className="text-xs text-red-500">{fieldState.error.message}</span>
@@ -129,7 +129,7 @@ export default function LoginPage() {
           </Link>
         </div>
 
-        <Card className="mt-8 p-3.5 gap-0 rounded-xl bg-white border border-dashed border-[var(--ink-200)] text-[13px] text-[var(--ink-600)] leading-relaxed">
+        <Card className="mt-8 p-3.5 gap-0 rounded-xl bg-[var(--ink-100)] border border-dashed border-[var(--ink-200)] text-[13px] text-[var(--ink-600)] leading-relaxed">
           <div className="font-semibold text-[var(--ink-900)] mb-1">Buying as a guest?</div>
           No account needed — pick a network and pay directly.
           <Link href="/networks" className="mt-1.5 inline-flex items-center gap-1 text-[var(--ink-700)] no-underline text-[13px] font-semibold">

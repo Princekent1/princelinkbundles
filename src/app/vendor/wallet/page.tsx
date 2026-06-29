@@ -137,7 +137,7 @@ function WalletPageContent() {
                   className={`rounded-full px-[18px] py-2 h-auto text-[13px] font-semibold gap-0 ${
                     amount === String(preset)
                       ? "bg-[var(--brand-500)] hover:bg-[var(--brand-600)] text-white border-transparent"
-                      : "bg-white border-[var(--ink-200)] text-[var(--ink-700)] hover:border-[var(--ink-300)]"
+                      : "bg-[var(--ink-100)] border-[var(--ink-200)] text-[var(--ink-700)] hover:border-[var(--ink-300)]"
                   }`}
                 >
                   GHS {preset}
@@ -152,7 +152,7 @@ function WalletPageContent() {
                   placeholder="e.g. 250"
                   value={amount}
                   onChange={e => setAmount(e.target.value)}
-                  className="h-auto rounded-xl border-[var(--ink-200)] bg-white px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
+                  className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
                 />
               </div>
               <Button

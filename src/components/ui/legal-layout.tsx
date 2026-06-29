@@ -16,8 +16,8 @@ export function LegalLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-white">
-      <header className="border-b border-[var(--ink-100)] bg-white sticky top-0 z-10">
+    <div className="min-h-screen bg-[var(--ink-50)]">
+      <header className="border-b border-[var(--ink-100)] bg-[var(--ink-50)] sticky top-0 z-10">
         <div className="max-w-[760px] mx-auto px-6 flex items-center justify-between h-16">
           <Wordmark small />
           <Link

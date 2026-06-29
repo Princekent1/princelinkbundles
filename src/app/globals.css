@@ -49,72 +49,38 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: #16A34A;
+  --background: #0b1121;
+  --foreground: #f1f5f9;
+  --card: #0f172a;
+  --card-foreground: #f1f5f9;
+  --popover: #0f172a;
+  --popover-foreground: #f1f5f9;
+  --primary: #2563eb;
   --primary-foreground: #ffffff;
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: #16A34A;
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.875rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
-
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  --secondary: #1e293b;
+  --secondary-foreground: #f1f5f9;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --accent: #1e293b;
+  --accent-foreground: #f1f5f9;
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --border: #1e293b;
+  --input: #1e293b;
+  --ring: #2563eb;
+  --chart-1: #2563eb;
+  --chart-2: #00e5ff;
+  --chart-3: #3b82f6;
+  --chart-4: #0ea5e9;
+  --chart-5: #6366f1;
+  --radius: 0.75rem;
+  --sidebar: #0f172a;
+  --sidebar-foreground: #f1f5f9;
+  --sidebar-primary: #2563eb;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #1e293b;
+  --sidebar-accent-foreground: #f1f5f9;
+  --sidebar-border: #1e293b;
+  --sidebar-ring: #2563eb;
 }
 
 @layer base {
@@ -134,28 +100,29 @@
 
 /* ─── Prince K Ventures design tokens ─── */
 :root {
-  /* Neutrals — warm stone scale */
-  --ink-900: #1C1917;
-  --ink-800: #292524;
-  --ink-700: #44403C;
-  --ink-600: #57534E;
-  --ink-500: #78716C;
-  --ink-400: #A8A29E;
-  --ink-300: #D6D3D1;
-  --ink-200: #E7E5E4;
-  --ink-100: #F5F5F4;
-  --ink-50:  #FAFAF9;
+  /* Neutrals — dark slate scale (900 = lightest text, 50 = darkest bg) */
+  --ink-900: #f8fafc;
+  --ink-800: #e2e8f0;
+  --ink-700: #cbd5e1;
+  --ink-600: #94a3b8;
+  --ink-500: #64748b;
+  --ink-400: #475569;
+  --ink-300: #334155;
+  --ink-200: #1e293b;
+  --ink-100: #0f172a;
+  --ink-50:  #0b1121;
 
-  /* Brand — green #16A34A */
-  --brand-600: #15803D;
-  --brand-500: #16A34A;
-  --brand-400: #22C55E;
-  --brand-100: #DCFCE7;
-  --brand-50:  #F0FDF4;
+  /* Brand — blue */
+  --brand-600: #1d4ed8;
+  --brand-500: #2563eb;
+  --brand-400: #3b82f6;
+  --brand-300: #60a5fa;
+  --brand-100: rgba(37,99,235,0.18);
+  --brand-50:  rgba(37,99,235,0.08);
 
-  /* Gold accent */
-  --bh-accent-500: #F7B836;
-  --bh-accent-100: #FEF3C7;
+  /* Cyan accent */
+  --bh-accent-500: #00e5ff;
+  --bh-accent-100: rgba(0,229,255,0.15);
 
   /* Network colors */
   --net-mtn:              #F5B800;
@@ -198,7 +165,7 @@
 }
 
 .bh-card {
-  background: white;
+  background: var(--ink-100);
   border-radius: 16px;
   border: 1px solid var(--ink-200);
 }
@@ -209,7 +176,7 @@
   padding: 12px 14px;
   border: 1px solid var(--ink-200);
   border-radius: 12px;
-  background: white;
+  background: var(--ink-100);
   font-size: 15px;
   color: var(--ink-900);
   transition: border-color .15s, box-shadow .15s;

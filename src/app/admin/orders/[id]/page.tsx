@@ -386,7 +386,7 @@ export default function AdminOrderDetailPage({ params }: { params: Promise<{ id:
             placeholder="e.g. SIM not active on network"
             value={failReason}
             onChange={e => setFailReason(e.target.value)}
-            className="h-auto rounded-xl border-[var(--ink-200)] bg-white px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
+            className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
           />
           {order?.paymentMethod === "wallet" && (
             <p className="text-xs text-[var(--ink-500)] mt-0.5">

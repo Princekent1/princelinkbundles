@@ -174,7 +174,7 @@ export default function AdminVendorDetailPage({ params }: { params: Promise<{ id
                   placeholder="Min. 8 characters"
                   value={newPwd}
                   onChange={e => setNewPwd(e.target.value)}
-                  className="h-auto rounded-xl border-[var(--ink-200)] bg-white px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)] w-[220px]"
+                  className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)] w-[220px]"
                 />
               </div>
               <div className="flex flex-col gap-1.5">
@@ -184,7 +184,7 @@ export default function AdminVendorDetailPage({ params }: { params: Promise<{ id
                   placeholder="Repeat password"
                   value={confirmPwd}
                   onChange={e => setConfirmPwd(e.target.value)}
-                  className="h-auto rounded-xl border-[var(--ink-200)] bg-white px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)] w-[220px]"
+                  className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)] w-[220px]"
                 />
               </div>
               <Button
@@ -213,7 +213,7 @@ export default function AdminVendorDetailPage({ params }: { params: Promise<{ id
                   placeholder="e.g. 50 or -20"
                   value={adjAmount}
                   onChange={e => setAdjAmount(e.target.value)}
-                  className="h-auto rounded-xl border-[var(--ink-200)] bg-white px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)] w-[180px]"
+                  className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)] w-[180px]"
                 />
                 {adjAmount && !isNaN(adjAmountNum) && (
                   <span className="text-xs text-[var(--ink-500)]">
@@ -229,7 +229,7 @@ export default function AdminVendorDetailPage({ params }: { params: Promise<{ id
                   placeholder="Required — explain this adjustment"
                   value={adjNote}
                   onChange={e => setAdjNote(e.target.value)}
-                  className="h-auto rounded-xl border-[var(--ink-200)] bg-white px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
+                  className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
                 />
               </div>
               <Button

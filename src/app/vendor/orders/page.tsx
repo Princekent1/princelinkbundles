@@ -170,7 +170,7 @@ function VendorOrdersContent() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 bg-white border border-[var(--ink-200)] rounded-full px-3.5 py-2">
+          <div className="flex items-center gap-2 bg-[var(--ink-100)] border border-[var(--ink-200)] rounded-full px-3.5 py-2">
             <Icon name="search" size={14} />
             <Input
               ref={searchRef}

@@ -79,7 +79,7 @@ function TransactionsContent() {
               className={`text-left p-4 md:p-5 rounded-2xl border relative overflow-hidden transition-colors cursor-pointer ${
                 type === c.key
                   ? "border-[var(--ink-900)] bg-[var(--ink-50)]"
-                  : "border-[var(--ink-200)] bg-white hover:border-[var(--ink-400)]"
+                  : "border-[var(--ink-200)] bg-[var(--ink-100)] hover:border-[var(--ink-400)]"
               }`}
             >
               <div className="absolute top-0 left-0 w-1 h-full" style={{ background: c.accent }} />
@@ -101,7 +101,7 @@ function TransactionsContent() {
             </Button>
           )}
           <Select value={type} onValueChange={v => push({ type: v })}>
-            <SelectTrigger className="h-auto rounded-xl border-[var(--ink-200)] bg-white px-3.5 py-2.5 text-sm w-[160px]">
+            <SelectTrigger className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-2.5 text-sm w-[160px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

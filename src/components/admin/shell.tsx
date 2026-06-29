@@ -42,7 +42,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const initial = displayName[0].toUpperCase();
 
   return (
-    <div className="flex min-h-screen bg-white">
+    <div className="flex min-h-screen bg-[var(--ink-50)]">
       {/* Mobile backdrop */}
       {mobileOpen && (
         <div
@@ -54,7 +54,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 h-screen z-40 w-[240px] bg-white
+          fixed top-0 left-0 h-screen z-40 w-[240px] bg-[var(--ink-50)]
           border-r border-[var(--ink-200)] flex flex-col shrink-0
           transition-transform duration-200 ease-in-out
           md:sticky md:translate-x-0
@@ -156,7 +156,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       {/* Content area */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Mobile top bar */}
-        <header className="md:hidden sticky top-0 z-20 bg-white border-b border-[var(--ink-200)] flex items-center gap-3 px-4 py-3">
+        <header className="md:hidden sticky top-0 z-20 bg-[var(--ink-50)] border-b border-[var(--ink-200)] flex items-center gap-3 px-4 py-3">
           <button
             onClick={() => setMobileOpen(true)}
             className="p-1.5 rounded-lg text-[var(--ink-700)] bg-transparent border-none cursor-pointer"

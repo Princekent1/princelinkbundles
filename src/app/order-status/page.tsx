@@ -30,7 +30,7 @@ export default function OrderStatusPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[var(--ink-50)]">
       <VendorFlowBar />
       <div className="max-w-[480px] mx-auto px-6 pt-6 pb-10">
         <Link
@@ -60,7 +60,7 @@ export default function OrderStatusPage() {
               maxLength={8}
               autoCapitalize="none"
               autoCorrect="off"
-              className="h-auto rounded-xl border-[var(--ink-200)] bg-white px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)] bh-mono tracking-widest"
+              className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)] bh-mono tracking-widest"
             />
             {error ? (
               <span className="text-xs text-red-500">{error}</span>
@@ -76,7 +76,7 @@ export default function OrderStatusPage() {
           </Button>
         </form>
 
-        <Card className="mt-7 p-4 gap-0 rounded-xl border border-dashed border-[var(--ink-200)] bg-white text-[13px] text-[var(--ink-600)] leading-relaxed">
+        <Card className="mt-7 p-4 gap-0 rounded-xl border border-dashed border-[var(--ink-200)] bg-[var(--ink-100)] text-[13px] text-[var(--ink-600)] leading-relaxed">
           <div className="font-semibold mb-1 text-[var(--ink-900)]">Lost your reference?</div>
           We can&apos;t recover it from your phone number alone — that would let anyone look up anyone&apos;s order. WhatsApp our support line and we&apos;ll help.
         </Card>

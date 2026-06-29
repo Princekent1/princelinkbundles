@@ -40,7 +40,7 @@ export default function BundlesPage() {
   const networkLabel = NETWORK_LABELS[networkId] ?? networkId.toUpperCase();
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[var(--ink-50)]">
       <VendorFlowBar />
       <div className="max-w-[480px] mx-auto px-6 pb-24 relative">
         <div className="pt-6">
@@ -76,7 +76,7 @@ export default function BundlesPage() {
                   className={`flex items-center gap-3.5 p-4 rounded-2xl cursor-pointer transition-colors ${
                     active
                       ? "border-2 border-[var(--brand-500)] bg-[var(--brand-50)]"
-                      : "border border-[var(--ink-200)] bg-white"
+                      : "border border-[var(--ink-200)] bg-[var(--ink-100)]"
                   }`}
                 >
                   <input type="radio" name="bundle" checked={active} onChange={() => setSel(b._id)} className="hidden" />
@@ -93,7 +93,7 @@ export default function BundlesPage() {
                     <div className="bh-display text-[22px]">{ghsp(b.priceGhs)}</div>
                   )}
                   <span
-                    className="size-[22px] rounded-full shrink-0 bg-white"
+                    className="size-[22px] rounded-full shrink-0 bg-[var(--ink-100)]"
                     style={{
                       border: active ? "6px solid var(--brand-500)" : "2px solid var(--ink-300)",
                     }}
@@ -105,7 +105,7 @@ export default function BundlesPage() {
         )}
       </div>
 
-      <div className="fixed left-0 right-0 bottom-0 p-4 bg-white border-t border-[var(--ink-200)] shadow-[0_-8px_24px_rgba(11,18,32,0.04)] flex justify-center">
+      <div className="fixed left-0 right-0 bottom-0 p-4 bg-[var(--ink-100)] border-t border-[var(--ink-200)] shadow-[0_-8px_24px_rgba(11,18,32,0.04)] flex justify-center">
         <div className="w-full max-w-[448px]">
           <Button
             disabled={!selected}

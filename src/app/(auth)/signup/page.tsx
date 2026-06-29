@@ -49,7 +49,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[var(--ink-50)]">
       <div className="max-w-[480px] mx-auto px-6 pt-10 pb-16">
         <Wordmark small />
 
@@ -79,7 +79,7 @@ export default function SignupPage() {
                   <Input
                     {...field}
                     placeholder="e.g. DataFrat GH"
-                    className="h-auto rounded-xl border-[var(--ink-200)] bg-white px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
+                    className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
                   />
                   {fieldState.error && <span className="text-xs text-red-500">{fieldState.error.message}</span>}
                 </>
@@ -102,7 +102,7 @@ export default function SignupPage() {
                     {...field}
                     type="email"
                     placeholder="you@example.com"
-                    className="h-auto rounded-xl border-[var(--ink-200)] bg-white px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
+                    className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
                   />
                   {fieldState.error && <span className="text-xs text-red-500">{fieldState.error.message}</span>}
                 </>
@@ -127,7 +127,7 @@ export default function SignupPage() {
                     inputMode="numeric"
                     autoComplete="tel"
                     placeholder="0XX XXX XXXX"
-                    className="h-auto rounded-xl border-[var(--ink-200)] bg-white px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
+                    className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
                   />
                   {fieldState.error
                     ? <span className="text-xs text-red-500">{fieldState.error.message}</span>
@@ -149,7 +149,7 @@ export default function SignupPage() {
                   <PasswordInput
                     {...field}
                     placeholder="Min. 8 characters"
-                    className="h-auto rounded-xl border-[var(--ink-200)] bg-white px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
+                    className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
                   />
                   {fieldState.error && <span className="text-xs text-red-500">{fieldState.error.message}</span>}
                 </>
@@ -171,7 +171,7 @@ export default function SignupPage() {
                   <PasswordInput
                     {...field}
                     placeholder="Repeat password"
-                    className="h-auto rounded-xl border-[var(--ink-200)] bg-white px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
+                    className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
                   />
                   {fieldState.error && <span className="text-xs text-red-500">{fieldState.error.message}</span>}
                 </>

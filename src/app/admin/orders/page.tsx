@@ -179,12 +179,12 @@ function AdminOrdersContent() {
               value={searchInput}
               onChange={e => setSearchInput(e.target.value)}
               onKeyDown={e => e.key === "Enter" && submitSearch()}
-              className="h-auto rounded-xl border-[var(--ink-200)] bg-white pl-9 pr-3.5 py-2.5 text-sm text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
+              className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] pl-9 pr-3.5 py-2.5 text-sm text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
             />
           </div>
           <div className="flex flex-wrap gap-2">
             <Select value={network} onValueChange={v => push({ network: v })}>
-              <SelectTrigger className="h-auto rounded-xl border-[var(--ink-200)] bg-white px-3.5 py-2.5 text-sm flex-1 min-w-[130px]">
+              <SelectTrigger className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-2.5 text-sm flex-1 min-w-[130px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -195,7 +195,7 @@ function AdminOrdersContent() {
               </SelectContent>
             </Select>
             <Select value={payment} onValueChange={v => push({ paymentMethod: v })}>
-              <SelectTrigger className="h-auto rounded-xl border-[var(--ink-200)] bg-white px-3.5 py-2.5 text-sm flex-1 min-w-[130px]">
+              <SelectTrigger className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-2.5 text-sm flex-1 min-w-[130px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -205,7 +205,7 @@ function AdminOrdersContent() {
               </SelectContent>
             </Select>
             <Select value={dateRange} onValueChange={v => push({ dateRange: v })}>
-              <SelectTrigger className="h-auto rounded-xl border-[var(--ink-200)] bg-white px-3.5 py-2.5 text-sm flex-1 min-w-[130px]">
+              <SelectTrigger className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-2.5 text-sm flex-1 min-w-[130px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

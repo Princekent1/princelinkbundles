@@ -298,7 +298,7 @@ export default function AdminBundlesPage() {
               className={`rounded-full px-3.5 py-2 h-auto text-[13px] font-semibold gap-2 border ${
                 net === n.id
                   ? "bg-[var(--ink-900)] text-white border-[var(--ink-900)] hover:bg-[var(--ink-800)]"
-                  : "bg-white text-[var(--ink-700)] border-[var(--ink-200)] hover:border-[var(--ink-300)]"
+                  : "bg-[var(--ink-100)] text-[var(--ink-700)] border-[var(--ink-200)] hover:border-[var(--ink-300)]"
               }`}
             >
               <NetMark network={n.id.toUpperCase()} size="xs" />
@@ -452,7 +452,7 @@ export default function AdminBundlesPage() {
                 type="number" step="0.5" placeholder="e.g. 5"
                 value={createForm.volumeMb}
                 onChange={e => setCreateForm(f => ({ ...f, volumeMb: e.target.value }))}
-                className="h-auto rounded-xl border-[var(--ink-200)] bg-white px-3.5 py-3 text-sm"
+                className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-sm"
               />
               {liveName && (
                 <div className="flex items-center gap-1.5 text-xs text-[var(--ink-500)]">
@@ -468,7 +468,7 @@ export default function AdminBundlesPage() {
                   type="number" placeholder="e.g. 7"
                   value={createForm.validityDays}
                   onChange={e => setCreateForm(f => ({ ...f, validityDays: e.target.value }))}
-                  className="h-auto rounded-xl border-[var(--ink-200)] bg-white px-3.5 py-3 text-sm"
+                  className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-sm"
                 />
               </div>
               <div className="flex-1 flex flex-col gap-1.5">
@@ -477,7 +477,7 @@ export default function AdminBundlesPage() {
                   type="number" step="0.01" placeholder="e.g. 7.00"
                   value={createForm.priceGhs}
                   onChange={e => setCreateForm(f => ({ ...f, priceGhs: e.target.value }))}
-                  className="h-auto rounded-xl border-[var(--ink-200)] bg-white px-3.5 py-3 text-sm"
+                  className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-sm"
                 />
               </div>
             </div>
@@ -489,7 +489,7 @@ export default function AdminBundlesPage() {
                 type="number" step="0.01" placeholder="e.g. 6.00"
                 value={createForm.vendorPriceGhs}
                 onChange={e => setCreateForm(f => ({ ...f, vendorPriceGhs: e.target.value }))}
-                className="h-auto rounded-xl border-[var(--ink-200)] bg-white px-3.5 py-3 text-sm"
+                className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-sm"
               />
             </div>
             <div className="flex flex-col gap-1.5">
@@ -498,7 +498,7 @@ export default function AdminBundlesPage() {
                 type="number" placeholder="e.g. 1 — lower = first"
                 value={createForm.sortOrder}
                 onChange={e => setCreateForm(f => ({ ...f, sortOrder: e.target.value }))}
-                className="h-auto rounded-xl border-[var(--ink-200)] bg-white px-3.5 py-3 text-sm"
+                className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-sm"
               />
             </div>
             <div className="flex flex-col gap-1.5">
@@ -562,7 +562,7 @@ export default function AdminBundlesPage() {
                     value={editPrice} autoFocus
                     onChange={e => setEditPrice(e.target.value)}
                     onKeyDown={e => e.key === "Enter" && submitEdit()}
-                    className="h-auto rounded-xl border-[var(--ink-200)] bg-white px-3.5 py-3 text-[15px]"
+                    className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-[15px]"
                   />
                 </div>
                 <div className="flex-1 flex flex-col gap-1.5">
@@ -572,7 +572,7 @@ export default function AdminBundlesPage() {
                     value={editVendorPrice}
                     onChange={e => setEditVendorPrice(e.target.value)}
                     onKeyDown={e => e.key === "Enter" && submitEdit()}
-                    className="h-auto rounded-xl border-[var(--ink-200)] bg-white px-3.5 py-3 text-[15px]"
+                    className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-[15px]"
                   />
                 </div>
               </div>
@@ -648,7 +648,7 @@ export default function AdminBundlesPage() {
             value={archiveText}
             onChange={e => setArchiveText(e.target.value)}
             placeholder="ARCHIVE"
-            className="h-auto rounded-xl border-[var(--ink-200)] bg-white px-3.5 py-3 text-[15px]"
+            className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-[15px]"
           />
         </div>
       </ConfirmDialog>

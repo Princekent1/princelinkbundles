@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 
 export default function PendingPage() {
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 py-10">
+    <div className="min-h-screen bg-[var(--ink-50)] flex flex-col items-center justify-center px-6 py-10">
       <div className="max-w-[440px] w-full text-center">
         <Wordmark small />
 
@@ -22,7 +22,7 @@ export default function PendingPage() {
           You&apos;ll be able to log in and start placing orders once approved.
         </p>
 
-        <Card className="p-4 gap-0 rounded-[14px] border-[var(--ink-200)] bg-white text-[13px] text-[var(--ink-600)] leading-relaxed text-left mb-7">
+        <Card className="p-4 gap-0 rounded-[14px] border-[var(--ink-200)] bg-[var(--ink-100)] text-[13px] text-[var(--ink-600)] leading-relaxed text-left mb-7">
           <div className="font-semibold text-[var(--ink-900)] mb-1.5">What happens next?</div>
           <ol className="m-0 pl-[18px] flex flex-col gap-1.5">
             <li>The admin reviews your application — usually within 24 hours.</li>
@@ -31,7 +31,7 @@ export default function PendingPage() {
           </ol>
         </Card>
 
-        <Card className="p-3.5 gap-0 rounded-xl border border-dashed border-[var(--ink-200)] bg-white text-[13px] text-[var(--ink-600)] mb-7">
+        <Card className="p-3.5 gap-0 rounded-xl border border-dashed border-[var(--ink-200)] bg-[var(--ink-100)] text-[13px] text-[var(--ink-600)] mb-7">
           <span className="font-semibold text-[var(--ink-900)]">Questions?</span>{" "}
           Contact support and mention your registered email address.
         </Card>

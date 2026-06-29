@@ -34,7 +34,7 @@ export default function NetworksPage() {
   const bundles = data?.bundles ?? [];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[var(--ink-50)]">
       <VendorFlowBar />
       <div className="max-w-[480px] mx-auto px-6 pb-24">
         <div className="pt-6 flex items-center justify-between mb-6">
@@ -55,7 +55,7 @@ export default function NetworksPage() {
               <Link
                 key={n.id}
                 href={`/bundles/${n.id}`}
-                className="bg-white border border-[var(--ink-200)] rounded-2xl p-4 flex items-center gap-4 no-underline text-inherit hover:border-[var(--brand-300)] transition-colors"
+                className="bg-[var(--ink-100)] border border-[var(--ink-200)] rounded-2xl p-4 flex items-center gap-4 no-underline text-inherit hover:border-[var(--brand-300)] transition-colors"
               >
                 <NetMark network={n.id.toUpperCase()} />
                 <div className="flex-1">
