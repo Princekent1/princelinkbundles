@@ -391,11 +391,11 @@ export function LandingPage({ user }: { user: TokenPayload | null }) {
             <Link href="/refund-policy" className="no-underline transition-colors hover:text-white">Refund Policy</Link>
             <Link href="/faq" className="no-underline transition-colors hover:text-white">FAQs</Link>
             <a
-              href="mailto:support@princekventures.com"
+              href="mailto:Princelinkbundles@gmail.com"
               className="font-bold no-underline transition-colors hover:text-white"
               style={{ color: "#cbd5e1" }}
             >
-              support@princekventures.com
+              Princelinkbundles@gmail.com
             </a>
           </nav>
         </div>
