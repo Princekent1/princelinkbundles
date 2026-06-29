@@ -830,6 +830,8 @@ export type FulfillmentSettings = {
   autoSendGuests: boolean;
   autoApproveVendors: boolean;
   passPaystackFeesToCustomers: boolean;
+  contactPhone: string;
+  whatsappCommunityUrl: string;
   paystackFeeRateBps: number;
   jaybartBalance: string | null;
 };
@@ -847,12 +849,36 @@ export const getFulfillmentSettings = {
 };
 
 export const updateFulfillmentSettings = {
-  fn: async (data: Partial<Pick<FulfillmentSettings, "autoSendVendors" | "autoSendGuests" | "autoApproveVendors" | "passPaystackFeesToCustomers">>): Promise<Omit<FulfillmentSettings, "jaybartBalance" | "paystackFeeRateBps">> => {
+  fn: async (data: Partial<Pick<FulfillmentSettings, "autoSendVendors" | "autoSendGuests" | "autoApproveVendors" | "passPaystackFeesToCustomers" | "contactPhone" | "whatsappCommunityUrl">>): Promise<Omit<FulfillmentSettings, "jaybartBalance" | "paystackFeeRateBps">> => {
     try {
       const res = await apiClient.patch("/api/v1/admin/settings", data);
       return res.data;
     } catch (error) {
       return throwError(error as ApiError);
+    }
+  },
+};
+
+export const getPublicSettings = {
+  key: ["settings", "public"],
+  fn: async (): Promise<{ contactPhone: string }> => {
+    try {
+      const res = await apiClient.get("/api/v1/settings/public");
+      return res.data;
+    } catch {
+      return { contactPhone: "" };
+    }
+  },
+};
+
+export const getSiteConfig = {
+  key: ["settings", "site"],
+  fn: async (): Promise<{ whatsappCommunityUrl: string }> => {
+    try {
+      const res = await apiClient.get("/api/v1/settings/site");
+      return res.data;
+    } catch {
+      return { whatsappCommunityUrl: "" };
     }
   },
 };

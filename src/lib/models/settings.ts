@@ -5,6 +5,8 @@ export type Settings = {
   autoSendGuests: boolean;
   autoApproveVendors: boolean;
   passPaystackFeesToCustomers: boolean;
+  contactPhone: string;
+  whatsappCommunityUrl: string;
 };
 
 const schema = new mongoose.Schema<Settings>({
@@ -12,6 +14,8 @@ const schema = new mongoose.Schema<Settings>({
   autoSendGuests: { type: Boolean, default: false },
   autoApproveVendors: { type: Boolean, default: false },
   passPaystackFeesToCustomers: { type: Boolean, default: false },
+  contactPhone: { type: String, default: "" },
+  whatsappCommunityUrl: { type: String, default: "" },
 });
 
 export const SettingsModel =
@@ -24,5 +28,7 @@ export async function getSettings(): Promise<Settings> {
     autoSendGuests: doc?.autoSendGuests ?? false,
     autoApproveVendors: doc?.autoApproveVendors ?? false,
     passPaystackFeesToCustomers: doc?.passPaystackFeesToCustomers ?? false,
+    contactPhone: doc?.contactPhone ?? "",
+    whatsappCommunityUrl: doc?.whatsappCommunityUrl ?? "",
   };
 }

@@ -26,6 +26,8 @@ export const GET = async () => {
       autoSendGuests: s?.autoSendGuests ?? false,
       autoApproveVendors: s?.autoApproveVendors ?? false,
       passPaystackFeesToCustomers: s?.passPaystackFeesToCustomers ?? false,
+      contactPhone: s?.contactPhone ?? "",
+      whatsappCommunityUrl: s?.whatsappCommunityUrl ?? "",
       paystackFeeRateBps: PAYSTACK_FEE_RATE_BPS,
       jaybartBalance: b,
     });
@@ -41,13 +43,15 @@ export const PATCH = async (req: Request) => {
     if (authUser.role !== "admin") return createErrorResponse("Forbidden");
 
     const body = await req.json().catch(() => ({}));
-    const update: Record<string, boolean> = {};
+    const update: Record<string, boolean | string> = {};
     if (typeof body.autoSendVendors === "boolean") update.autoSendVendors = body.autoSendVendors;
     if (typeof body.autoSendGuests === "boolean") update.autoSendGuests = body.autoSendGuests;
     if (typeof body.autoApproveVendors === "boolean") update.autoApproveVendors = body.autoApproveVendors;
     if (typeof body.passPaystackFeesToCustomers === "boolean") {
       update.passPaystackFeesToCustomers = body.passPaystackFeesToCustomers;
     }
+    if (typeof body.contactPhone === "string") update.contactPhone = body.contactPhone.trim();
+    if (typeof body.whatsappCommunityUrl === "string") update.whatsappCommunityUrl = body.whatsappCommunityUrl.trim();
 
     if (!Object.keys(update).length) {
       return Response.json({ message: "Nothing to update" }, { status: 400 });
@@ -66,6 +70,8 @@ export const PATCH = async (req: Request) => {
       autoSendGuests: settings!.autoSendGuests,
       autoApproveVendors: settings!.autoApproveVendors,
       passPaystackFeesToCustomers: settings!.passPaystackFeesToCustomers ?? false,
+      contactPhone: settings!.contactPhone ?? "",
+      whatsappCommunityUrl: settings!.whatsappCommunityUrl ?? "",
     });
   } catch {
     return createErrorResponse("SomethingWentWrong");

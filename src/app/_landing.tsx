@@ -7,7 +7,8 @@ import { motion } from "motion/react";
 import { Icon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/stores/auth";
-import { logout } from "@/api";
+import { logout, getPublicSettings } from "@/api";
+import { useQuery } from "@tanstack/react-query";
 import type { TokenPayload } from "@/lib/jwt";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -114,6 +115,13 @@ export function LandingPage({ user }: { user: TokenPayload | null }) {
   }
 
   const dashboardHref = user?.role === "admin" ? "/admin/dashboard" : "/vendor/dashboard";
+
+  const { data: publicSettings } = useQuery({
+    queryKey: getPublicSettings.key,
+    queryFn: getPublicSettings.fn,
+    staleTime: 5 * 60_000,
+  });
+  const contactPhone = publicSettings?.contactPhone ?? "";
 
   return (
     <div className="min-h-screen" style={{ background: "#0b1121", color: "#94a3b8", fontFamily: "var(--font-inter), sans-serif" }}>
@@ -256,9 +264,9 @@ export function LandingPage({ user }: { user: TokenPayload | null }) {
 
           <motion.div {...fadeUp(0.44)} className="flex flex-wrap gap-8 justify-center">
             {[
-              { icon: "bolt",   value: "< 5 min",          label: "Avg. delivery",   href: null },
-              { icon: "shield", value: "Paystack",           label: "Secure checkout", href: null },
-              { icon: "phone",  value: "+233 54 842 6310",   label: "Call or WhatsApp", href: "tel:+233548426310" },
+              { icon: "bolt",   value: "< 5 min",   label: "Avg. delivery",   href: null },
+              { icon: "shield", value: "Paystack",   label: "Secure checkout", href: null },
+              ...(contactPhone ? [{ icon: "phone", value: contactPhone, label: "Call or WhatsApp", href: `tel:${contactPhone.replace(/\s/g, "")}` }] : []),
             ].map((s) => (
               <div key={s.label} className="flex items-center gap-2" style={{ color: "#94a3b8" }}>
                 <span style={{ color: "#00e5ff" }}>

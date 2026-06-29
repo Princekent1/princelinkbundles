@@ -6,7 +6,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { Wordmark } from "@/components/ui/wordmark";
 import { Icon } from "@/components/ui/icons";
 import { ghsp } from "@/lib/data";
-import { logout } from "@/api";
+import { logout, getSiteConfig } from "@/api";
+import { useQuery } from "@tanstack/react-query";
 import { useAuthStore } from "@/stores/auth";
 
 const NAV_ITEMS = [
@@ -33,6 +34,14 @@ export function VendorShell({
   const router = useRouter();
   const clearUser = useAuthStore((s) => s.clearUser);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const { data: siteConfig } = useQuery({
+    queryKey: getSiteConfig.key,
+    queryFn: getSiteConfig.fn,
+    staleTime: 5 * 60_000,
+  });
+
+  const whatsappUrl = siteConfig?.whatsappCommunityUrl ?? "";
   const displayName = vendorName || "Vendor";
   const initials = displayName
     .split(/\s+/)
@@ -127,22 +136,24 @@ export function VendorShell({
           </Link>
         </div>
 
-        <a
-          href="https://chat.whatsapp.com/KC7CFZlNjR79JerZooYG1N"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            display: "flex", alignItems: "center", gap: 10,
-            margin: "12px 0", padding: "10px 12px",
-            borderRadius: 10, textDecoration: "none",
-            background: "var(--ink-50)", color: "var(--ink-700)",
-            fontSize: 13, fontWeight: 600,
-          }}
-        >
-          <Icon name="whatsapp" size={16} />
-          <span style={{ flex: 1 }}>Join community</span>
-          <Icon name="ext" size={12} />
-        </a>
+        {whatsappUrl && (
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: "flex", alignItems: "center", gap: 10,
+              margin: "12px 0", padding: "10px 12px",
+              borderRadius: 10, textDecoration: "none",
+              background: "var(--ink-50)", color: "var(--ink-700)",
+              fontSize: 13, fontWeight: 600,
+            }}
+          >
+            <Icon name="whatsapp" size={16} />
+            <span style={{ flex: 1 }}>Join community</span>
+            <Icon name="ext" size={12} />
+          </a>
+        )}
 
         <div style={{ padding: 12, borderTop: "1px solid var(--ink-200)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AdminShell } from "@/components/admin/shell";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { PasswordInput } from "@/components/ui/password-input";
 import { getMe, changePassword, getFulfillmentSettings, updateFulfillmentSettings } from "@/api";
+import { Input } from "@/components/ui/input";
 import toast from "react-hot-toast";
 
 function ToggleSwitch({ checked, onChange, disabled }: { checked: boolean; onChange: (v: boolean) => void; disabled?: boolean }) {
@@ -44,6 +45,29 @@ export default function AdminSettingsPage() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [contactPhone, setContactPhone] = useState("");
+  const [whatsappUrl, setWhatsappUrl] = useState("");
+
+  useEffect(() => {
+    if (fulfillment) {
+      setContactPhone(fulfillment.contactPhone ?? "");
+      setWhatsappUrl(fulfillment.whatsappCommunityUrl ?? "");
+    }
+  }, [fulfillment]);
+
+  const contactDirty =
+    contactPhone !== (fulfillment?.contactPhone ?? "") ||
+    whatsappUrl !== (fulfillment?.whatsappCommunityUrl ?? "");
+
+  const { mutate: saveContact, isPending: savingContact } = useMutation({
+    mutationFn: () => updateFulfillmentSettings.fn({ contactPhone, whatsappCommunityUrl: whatsappUrl }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: getFulfillmentSettings.key });
+      toast.success("Contact settings saved");
+    },
+    onError: (err: { message: string }) => toast.error(err.message ?? "Failed to save"),
+  });
 
   const { mutate: submitPasswordChange, isPending } = useMutation({
     mutationFn: changePassword.fn,
@@ -161,6 +185,42 @@ export default function AdminSettingsPage() {
               disabled={fulfillmentLoading}
               onChange={(v) => updateSettings({ autoApproveVendors: v })}
             />
+          </div>
+        </Card>
+
+        <Card className="p-4 md:p-6 gap-0 rounded-2xl border-[var(--ink-200)] mb-5">
+          <div className="font-bold text-[15px] mb-1">Contact & community</div>
+          <p className="text-[13px] text-[var(--ink-500)] mb-5 mt-1">
+            Shown on the landing page and in the vendor/admin sidebar. Leave blank to hide.
+          </p>
+          <div className="flex flex-col gap-3.5">
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-[13px] font-semibold text-[var(--ink-700)]">Contact phone</Label>
+              <Input
+                value={contactPhone}
+                onChange={e => setContactPhone(e.target.value)}
+                placeholder="+233 XX XXX XXXX"
+                className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
+              />
+              <p className="text-[12px] text-[var(--ink-500)] m-0">Used as a tel: link on the landing page.</p>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-[13px] font-semibold text-[var(--ink-700)]">WhatsApp community URL</Label>
+              <Input
+                value={whatsappUrl}
+                onChange={e => setWhatsappUrl(e.target.value)}
+                placeholder="https://chat.whatsapp.com/..."
+                className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
+              />
+              <p className="text-[12px] text-[var(--ink-500)] m-0">Shown in the sidebar for admins and vendors.</p>
+            </div>
+            <Button
+              onClick={() => saveContact()}
+              disabled={!contactDirty || savingContact}
+              className="rounded-full px-6 py-3.5 h-auto text-sm font-semibold self-start gap-2 bg-[var(--brand-500)] hover:bg-[var(--brand-600)] shadow-none disabled:opacity-50"
+            >
+              {savingContact ? "Saving…" : "Save"}
+            </Button>
           </div>
         </Card>
 
