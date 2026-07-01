@@ -607,7 +607,7 @@ export const createBundle = {
 };
 
 export const updateBundle = {
-  fn: async (id: string, data: { priceGhs?: number; vendorPriceGhs?: number | null; jaybartPackageId?: number | null; jaybartNetworkId?: number | null; displayName?: string }): Promise<AdminBundleItem> => {
+  fn: async (id: string, data: { priceGhs?: number; vendorPriceGhs?: number | null; validityDays?: number; jaybartPackageId?: number | null; jaybartNetworkId?: number | null; displayName?: string }): Promise<AdminBundleItem> => {
     try {
       const res = await apiClient.patch(`/api/v1/admin/bundles/${id}`, data);
       return res.data;

@@ -92,6 +92,7 @@ export default function AdminBundlesPage() {
   const [editDisplayName, setEditDisplayName] = useState("");
   const [editPrice, setEditPrice] = useState("");
   const [editVendorPrice, setEditVendorPrice] = useState("");
+  const [editValidityDays, setEditValidityDays] = useState("");
   const [editJaybartId, setEditJaybartId] = useState("");
   const [editJaybartNetworkId, setEditJaybartNetworkId] = useState<number | null>(null);
 
@@ -126,13 +127,14 @@ export default function AdminBundlesPage() {
   });
 
   const { mutate: doEdit, isPending: isEditing } = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: { displayName?: string; priceGhs?: number; vendorPriceGhs?: number | null; jaybartPackageId?: number | null; jaybartNetworkId?: number | null } }) =>
+    mutationFn: ({ id, data }: { id: string; data: { displayName?: string; priceGhs?: number; vendorPriceGhs?: number | null; validityDays?: number; jaybartPackageId?: number | null; jaybartNetworkId?: number | null } }) =>
       updateBundle.fn(id, data),
     onSuccess: () => {
       toast.success("Bundle updated");
       setEditBundle(null);
       setEditPrice("");
       setEditVendorPrice("");
+      setEditValidityDays("");
       setEditJaybartId("");
       setEditJaybartNetworkId(null);
       invalidate();
@@ -229,6 +231,9 @@ export default function AdminBundlesPage() {
       if (vendorPriceGhs >= priceGhs) return toast.error("Vendor price must be less than public price");
     }
 
+    const validityDays = parseInt(editValidityDays, 10);
+    if (isNaN(validityDays) || validityDays <= 0) return toast.error("Enter valid validity days");
+
     const jaybartPackageId = editJaybartId === "__none__"
       ? null
       : editJaybartId
@@ -245,6 +250,7 @@ export default function AdminBundlesPage() {
         displayName: editDisplayName,
         priceGhs,
         vendorPriceGhs,
+        validityDays,
         ...(jaybartPackageId !== undefined ? { jaybartPackageId, jaybartNetworkId: resolvedNetworkId } : {}),
       },
     });
@@ -255,6 +261,7 @@ export default function AdminBundlesPage() {
     setEditDisplayName(b.displayName ?? "");
     setEditPrice(String(b.priceGhs / 100));
     setEditVendorPrice(b.vendorPriceGhs != null ? String(b.vendorPriceGhs / 100) : "");
+    setEditValidityDays(String(b.validityDays));
     setEditJaybartId(b.jaybartPackageId != null ? String(b.jaybartPackageId) : "");
     setEditJaybartNetworkId(b.jaybartNetworkId ?? null);
   }
@@ -560,7 +567,7 @@ export default function AdminBundlesPage() {
       </Dialog>
 
       {/* Edit dialog */}
-      <Dialog open={editBundle !== null} onOpenChange={open => { if (!open) { setEditBundle(null); setEditDisplayName(""); setEditPrice(""); setEditJaybartId(""); } }}>
+      <Dialog open={editBundle !== null} onOpenChange={open => { if (!open) { setEditBundle(null); setEditDisplayName(""); setEditPrice(""); setEditValidityDays(""); setEditJaybartId(""); } }}>
         <DialogContent className="max-w-[400px] rounded-2xl">
           <DialogHeader>
             <DialogTitle className="bh-display text-[20px]">Edit bundle</DialogTitle>
@@ -610,6 +617,16 @@ export default function AdminBundlesPage() {
                     className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-[15px]"
                   />
                 </div>
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label className="text-[13px] font-semibold">Validity (days)</Label>
+                <Input
+                  type="number" step="1" placeholder="e.g. 30"
+                  value={editValidityDays}
+                  onChange={e => setEditValidityDays(e.target.value)}
+                  onKeyDown={e => e.key === "Enter" && submitEdit()}
+                  className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-[15px]"
+                />
               </div>
               <div className="flex flex-col gap-1.5">
                 <Label className="text-[13px] font-semibold">Jaybart package</Label>

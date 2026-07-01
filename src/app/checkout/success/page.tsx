@@ -66,7 +66,7 @@ function SuccessContent() {
           <h2 className="bh-display" style={{ fontSize: 28, margin: "16px 0 6px", letterSpacing: "-0.02em" }}>
             Order placed.
           </h2>
-          <p style={{ margin: 0, opacity: 0.85, fontSize: 14 }}>We&apos;ll send your data within 5 minutes.</p>
+          <p style={{ margin: 0, opacity: 0.85, fontSize: 14 }}>Your data will be processed and delivered shortly.</p>
         </div>
 
         <div className="bh-card" style={{ marginTop: 20, padding: 20, textAlign: "center" }}>

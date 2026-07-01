@@ -12,7 +12,7 @@ export const PATCH = async (req: Request, { params }: { params: Promise<{ id: st
 
     const { id } = await params;
     const body = await req.json().catch(() => ({}));
-    const { priceGhs, vendorPriceGhs, jaybartPackageId, jaybartNetworkId, displayName } = body;
+    const { priceGhs, vendorPriceGhs, jaybartPackageId, jaybartNetworkId, displayName, validityDays } = body;
 
     const update: Record<string, unknown> = {};
 
@@ -34,6 +34,13 @@ export const PATCH = async (req: Request, { params }: { params: Promise<{ id: st
 
     if (typeof displayName === "string") {
       update.displayName = displayName.trim() || null;
+    }
+
+    if (validityDays !== undefined) {
+      if (!Number.isInteger(validityDays) || validityDays <= 0) {
+        return createErrorResponse("ValidationError", "validityDays must be a positive integer");
+      }
+      update.validityDays = validityDays;
     }
 
     if ("jaybartPackageId" in body) {
