@@ -29,6 +29,8 @@ import {
   restoreBundle,
   getJaybartPackages,
   syncJaybartBundles,
+  getFulfillmentSettings,
+  updateFulfillmentSettings,
   type AdminBundleItem,
   type CreateBundleInput,
   type JaybartPackage,
@@ -98,6 +100,26 @@ export default function AdminBundlesPage() {
 
   const [archiveTarget, setArchiveTarget] = useState<AdminBundleItem | null>(null);
   const [archiveText, setArchiveText] = useState("");
+
+  const [networkToggleTarget, setNetworkToggleTarget] = useState<{ id: string; label: string; action: "disable" | "enable" } | null>(null);
+
+  const { data: settingsData } = useQuery({
+    queryKey: getFulfillmentSettings.key,
+    queryFn: getFulfillmentSettings.fn,
+  });
+
+  const disabledNetworks: string[] = settingsData?.disabledNetworks ?? [];
+
+  const { mutate: doNetworkToggle, isPending: isTogglingNetwork } = useMutation({
+    mutationFn: (next: string[]) => updateFulfillmentSettings.fn({ disabledNetworks: next }),
+    onSuccess: () => {
+      const action = networkToggleTarget?.action;
+      toast.success(action === "disable" ? `${networkToggleTarget?.label} disabled` : `${networkToggleTarget?.label} enabled`);
+      setNetworkToggleTarget(null);
+      queryClient.invalidateQueries({ queryKey: getFulfillmentSettings.key });
+    },
+    onError: () => toast.error("Failed to update network status"),
+  });
 
   const { data, isLoading } = useQuery({
     queryKey: getAdminBundles.key(undefined, view),
@@ -256,6 +278,14 @@ export default function AdminBundlesPage() {
     });
   }
 
+  function confirmNetworkToggle() {
+    if (!networkToggleTarget) return;
+    const next = networkToggleTarget.action === "disable"
+      ? [...disabledNetworks, networkToggleTarget.id]
+      : disabledNetworks.filter(n => n !== networkToggleTarget.id);
+    doNetworkToggle(next);
+  }
+
   function openEdit(b: AdminBundleItem) {
     setEditBundle(b);
     setEditDisplayName(b.displayName ?? "");
@@ -314,23 +344,45 @@ export default function AdminBundlesPage() {
         </div>
 
         <div className="flex gap-2 mb-4 flex-wrap">
-          {NETWORKS.map(n => (
-            <Button
-              key={n.id}
-              onClick={() => setNet(n.id)}
-              className={`rounded-full px-3.5 py-2 h-auto text-[13px] font-semibold gap-2 border ${
-                net === n.id
-                  ? "bg-[var(--brand-500)] text-white border-[var(--brand-500)] hover:bg-[var(--brand-600)]"
-                  : "bg-[var(--ink-100)] text-[var(--ink-700)] border-[var(--ink-200)] hover:border-[var(--ink-300)]"
-              }`}
-            >
-              <NetMark network={n.id.toUpperCase()} size="xs" />
-              {n.label}
-              <span className={net === n.id ? "text-white/60" : "text-[var(--ink-500)]"}>
-                {visibleCounts[n.id] ?? 0}
-              </span>
-            </Button>
-          ))}
+          {NETWORKS.map(n => {
+            const isNetDisabled = disabledNetworks.includes(n.id);
+            const isSelected = net === n.id;
+            return (
+              <div
+                key={n.id}
+                className={`inline-flex items-center rounded-full border overflow-hidden ${
+                  isSelected
+                    ? "bg-[var(--brand-500)] border-[var(--brand-500)]"
+                    : "bg-[var(--ink-100)] border-[var(--ink-200)]"
+                }`}
+              >
+                <button
+                  onClick={() => setNet(n.id)}
+                  className={`flex items-center gap-2 px-3.5 py-2 text-[13px] font-semibold bg-transparent border-none cursor-pointer ${
+                    isSelected ? "text-white" : "text-[var(--ink-700)]"
+                  }`}
+                >
+                  <span className={`size-1.5 rounded-full flex-shrink-0 ${isNetDisabled ? "bg-[var(--err)]" : "bg-[var(--ok)]"}`} />
+                  <span className={isNetDisabled ? "opacity-50" : ""}>
+                    <NetMark network={n.id.toUpperCase()} size="xs" />
+                  </span>
+                  {n.label}
+                  <span className={isSelected ? "text-white/60" : "text-[var(--ink-500)]"}>
+                    {visibleCounts[n.id] ?? 0}
+                  </span>
+                </button>
+                <span className={`h-3.5 w-px flex-shrink-0 ${isSelected ? "bg-white/30" : "bg-[var(--ink-300)]"}`} />
+                <button
+                  onClick={() => setNetworkToggleTarget({ id: n.id, label: n.label, action: isNetDisabled ? "enable" : "disable" })}
+                  className={`bg-transparent border-none cursor-pointer px-2.5 py-2 text-[11px] font-bold uppercase tracking-wide ${
+                    isSelected ? "text-white/80 hover:text-white" : "text-[var(--ink-500)] hover:text-[var(--ink-700)]"
+                  }`}
+                >
+                  {isNetDisabled ? "Enable" : "Disable"}
+                </button>
+              </div>
+            );
+          })}
         </div>
 
         <Card className="gap-0 rounded-2xl border-[var(--ink-200)] overflow-hidden">
@@ -404,6 +456,11 @@ export default function AdminBundlesPage() {
                         <Badge className="rounded-full px-2.5 py-1 h-auto text-xs font-semibold border-transparent bg-[var(--ink-100)] text-[var(--ink-600)] gap-1.5">
                           <span className="size-1.5 rounded-full bg-[var(--ink-400)]" />
                           Archived
+                        </Badge>
+                      ) : disabledNetworks.includes(b.network) ? (
+                        <Badge className="rounded-full px-2.5 py-1 h-auto text-xs font-semibold border-transparent bg-[var(--err-bg)] text-[oklch(0.40_0.20_25)] gap-1.5">
+                          <span className="size-1.5 rounded-full bg-[var(--err)]" />
+                          Network off
                         </Badge>
                       ) : (
                         <Badge className="rounded-full px-2.5 py-1 h-auto text-xs font-semibold border-transparent bg-[var(--ok-bg)] text-[oklch(0.40_0.18_150)] gap-1.5">
@@ -714,6 +771,59 @@ export default function AdminBundlesPage() {
         confirmDisabled={isRestoring}
         onConfirm={() => restoreTarget && doRestore(restoreTarget._id)}
       />
+
+      <Dialog open={networkToggleTarget !== null} onOpenChange={open => { if (!open) setNetworkToggleTarget(null); }}>
+        <DialogContent className="max-w-[400px] rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="bh-display text-[20px]">
+              {networkToggleTarget?.action === "disable"
+                ? `Disable ${networkToggleTarget.label}?`
+                : `Enable ${networkToggleTarget?.label}?`}
+            </DialogTitle>
+          </DialogHeader>
+          {networkToggleTarget && (
+            <div className="flex flex-col gap-4 py-1">
+              <div className="flex items-center gap-3 p-3.5 bg-[var(--ink-50)] rounded-xl">
+                <NetMark network={networkToggleTarget.id.toUpperCase()} size="sm" />
+                <div>
+                  <div className="font-semibold text-sm">{networkToggleTarget.label}</div>
+                  <div className="text-xs text-[var(--ink-500)]">
+                    {counts.active[networkToggleTarget.id] ?? 0} active bundle{(counts.active[networkToggleTarget.id] ?? 0) !== 1 ? "s" : ""} affected
+                  </div>
+                </div>
+                <span className={`ml-auto size-2 rounded-full flex-shrink-0 ${networkToggleTarget.action === "disable" ? "bg-[var(--err)]" : "bg-[var(--ok)]"}`} />
+              </div>
+              <p className={`text-[13px] rounded-xl px-3.5 py-3 leading-relaxed m-0 ${
+                networkToggleTarget.action === "disable"
+                  ? "bg-[var(--err-bg)] text-[oklch(0.40_0.20_25)]"
+                  : "bg-[var(--ok-bg)] text-[oklch(0.40_0.18_150)]"
+              }`}>
+                {networkToggleTarget.action === "disable"
+                  ? `All ${networkToggleTarget.label} bundles will be removed from the public listing and vendor catalog. Any order attempt will be rejected before payment.`
+                  : `${networkToggleTarget.label} bundles will reappear for buyers and vendors immediately. Orders will be accepted and fulfilled as normal.`}
+              </p>
+            </div>
+          )}
+          <DialogFooter className="gap-2">
+            <Button variant="outline" className="rounded-full" onClick={() => setNetworkToggleTarget(null)}>
+              Cancel
+            </Button>
+            <Button
+              className={`rounded-full ${
+                networkToggleTarget?.action === "disable"
+                  ? "bg-[var(--err)] hover:bg-[var(--err)]/90 text-white"
+                  : "bg-[var(--ok)] hover:bg-[var(--ok)]/90 text-white"
+              }`}
+              disabled={isTogglingNetwork}
+              onClick={confirmNetworkToggle}
+            >
+              {isTogglingNetwork
+                ? (networkToggleTarget?.action === "disable" ? "Disabling…" : "Enabling…")
+                : (networkToggleTarget?.action === "disable" ? `Disable ${networkToggleTarget?.label}` : `Enable ${networkToggleTarget?.label}`)}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AdminShell>
   );
 }

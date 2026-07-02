@@ -40,6 +40,12 @@ export const POST = async (req: Request) => {
     }
 
     const settings = await getSettings();
+
+    if (settings.disabledNetworks.includes(bundle.network)) {
+      log("network disabled network=%s bundleId=%s", bundle.network, bundleId)
+      return Response.json({ message: "This network is currently unavailable" }, { status: 400 });
+    }
+
     const fee = calculatePaystackFee(bundle.priceGhs, settings.passPaystackFeesToCustomers);
 
     let reference = generateReference();

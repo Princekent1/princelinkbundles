@@ -844,6 +844,7 @@ export type FulfillmentSettings = {
   passPaystackFeesToCustomers: boolean;
   contactPhone: string;
   whatsappCommunityUrl: string;
+  disabledNetworks: string[];
   paystackFeeRateBps: number;
   jaybartBalance: string | null;
 };
@@ -861,7 +862,7 @@ export const getFulfillmentSettings = {
 };
 
 export const updateFulfillmentSettings = {
-  fn: async (data: Partial<Pick<FulfillmentSettings, "autoSendVendors" | "autoSendGuests" | "autoApproveVendors" | "passPaystackFeesToCustomers" | "contactPhone" | "whatsappCommunityUrl">>): Promise<Omit<FulfillmentSettings, "jaybartBalance" | "paystackFeeRateBps">> => {
+  fn: async (data: Partial<Pick<FulfillmentSettings, "autoSendVendors" | "autoSendGuests" | "autoApproveVendors" | "passPaystackFeesToCustomers" | "contactPhone" | "whatsappCommunityUrl" | "disabledNetworks">>): Promise<Omit<FulfillmentSettings, "jaybartBalance" | "paystackFeeRateBps">> => {
     try {
       const res = await apiClient.patch("/api/v1/admin/settings", data);
       return res.data;

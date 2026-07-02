@@ -49,6 +49,13 @@ export const POST = async (req: Request) => {
       return Response.json({ message: "Bundle not found or unavailable" }, { status: 404 });
     }
 
+    const settings = await getSettings();
+
+    if (settings.disabledNetworks.includes(bundle.network)) {
+      log("network disabled network=%s bundleId=%s vendorId=%s", bundle.network, bundleId, authUser._id)
+      return Response.json({ message: "This network is currently unavailable" }, { status: 400 });
+    }
+
     const price = effectiveVendorPrice(bundle);
     const vendorId = new mongoose.Types.ObjectId(authUser._id);
 
@@ -104,7 +111,6 @@ export const POST = async (req: Request) => {
       throw err;
     }
 
-    const settings = await getSettings();
     if (settings.autoSendVendors) {
       log("autoSendVendors enabled — calling tryAutoSend reference=%s", order.reference)
       await tryAutoSend(order._id, order.customerPhone, bundle.jaybartPackageId);

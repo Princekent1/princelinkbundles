@@ -28,6 +28,7 @@ export const GET = async () => {
       passPaystackFeesToCustomers: s?.passPaystackFeesToCustomers ?? false,
       contactPhone: s?.contactPhone ?? "",
       whatsappCommunityUrl: s?.whatsappCommunityUrl ?? "",
+      disabledNetworks: s?.disabledNetworks ?? [],
       paystackFeeRateBps: PAYSTACK_FEE_RATE_BPS,
       jaybartBalance: b,
     });
@@ -43,7 +44,7 @@ export const PATCH = async (req: Request) => {
     if (authUser.role !== "admin") return createErrorResponse("Forbidden");
 
     const body = await req.json().catch(() => ({}));
-    const update: Record<string, boolean | string> = {};
+    const update: Record<string, boolean | string | string[]> = {};
     if (typeof body.autoSendVendors === "boolean") update.autoSendVendors = body.autoSendVendors;
     if (typeof body.autoSendGuests === "boolean") update.autoSendGuests = body.autoSendGuests;
     if (typeof body.autoApproveVendors === "boolean") update.autoApproveVendors = body.autoApproveVendors;
@@ -52,6 +53,12 @@ export const PATCH = async (req: Request) => {
     }
     if (typeof body.contactPhone === "string") update.contactPhone = body.contactPhone.trim();
     if (typeof body.whatsappCommunityUrl === "string") update.whatsappCommunityUrl = body.whatsappCommunityUrl.trim();
+    if (Array.isArray(body.disabledNetworks)) {
+      const VALID_NETWORKS = ["mtn", "telecel", "airteltigo"];
+      update.disabledNetworks = body.disabledNetworks.filter(
+        (n: unknown) => typeof n === "string" && VALID_NETWORKS.includes(n)
+      );
+    }
 
     if (!Object.keys(update).length) {
       return Response.json({ message: "Nothing to update" }, { status: 400 });
@@ -72,6 +79,7 @@ export const PATCH = async (req: Request) => {
       passPaystackFeesToCustomers: settings!.passPaystackFeesToCustomers ?? false,
       contactPhone: settings!.contactPhone ?? "",
       whatsappCommunityUrl: settings!.whatsappCommunityUrl ?? "",
+      disabledNetworks: settings!.disabledNetworks ?? [],
     });
   } catch {
     return createErrorResponse("SomethingWentWrong");

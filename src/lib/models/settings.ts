@@ -7,6 +7,7 @@ export type Settings = {
   passPaystackFeesToCustomers: boolean;
   contactPhone: string;
   whatsappCommunityUrl: string;
+  disabledNetworks: string[];
 };
 
 const schema = new mongoose.Schema<Settings>({
@@ -16,6 +17,7 @@ const schema = new mongoose.Schema<Settings>({
   passPaystackFeesToCustomers: { type: Boolean, default: false },
   contactPhone: { type: String, default: "" },
   whatsappCommunityUrl: { type: String, default: "" },
+  disabledNetworks: { type: [String], enum: ["mtn", "telecel", "airteltigo"], default: [] },
 });
 
 export const SettingsModel =
@@ -30,5 +32,6 @@ export async function getSettings(): Promise<Settings> {
     passPaystackFeesToCustomers: doc?.passPaystackFeesToCustomers ?? false,
     contactPhone: doc?.contactPhone ?? "",
     whatsappCommunityUrl: doc?.whatsappCommunityUrl ?? "",
+    disabledNetworks: doc?.disabledNetworks ?? [],
   };
 }
