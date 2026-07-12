@@ -1,6 +1,8 @@
 import { createErrorResponse } from "@/lib/errors";
 import { getAuthUser } from "@/lib/get-auth-user";
 import { UserModel } from "@/lib/models/user";
+import { getSettings } from "@/lib/models/settings";
+import { getLatestSignupFee } from "@/lib/models/vendor-signup-fee";
 import connectMongo from "@/lib/mongo";
 
 export const GET = async () => {
@@ -16,6 +18,18 @@ export const GET = async () => {
 
     if (!user) return createErrorResponse("Unauthorized");
 
+    let signupFeeRequired = false;
+    let signupFeeStatus: "unpaid" | "pending" | "success" | "failed" | null = null;
+
+    if (user.role === "vendor" && user.status === "pending") {
+      const settings = await getSettings();
+      signupFeeRequired = settings.requireVendorSignupFee;
+      if (signupFeeRequired) {
+        const fee = await getLatestSignupFee(user._id);
+        signupFeeStatus = fee?.status ?? "unpaid";
+      }
+    }
+
     return Response.json({
       user: {
         _id: user._id.toString(),
@@ -25,6 +39,8 @@ export const GET = async () => {
         walletBalance: user.walletBalance ?? 0,
         role: user.role,
         status: user.status,
+        signupFeeRequired,
+        signupFeeStatus,
       },
     });
   } catch {

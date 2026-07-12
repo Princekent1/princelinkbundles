@@ -1,0 +1,90 @@
+import connectMongo from "@/lib/mongo";
+import { VendorSignupFeeModel, getLatestSignupFee } from "@/lib/models/vendor-signup-fee";
+import { getAuthUser } from "@/lib/get-auth-user";
+import { createErrorResponse } from "@/lib/errors";
+import { initializeTransaction, generateSignupFeeReference } from "@/lib/paystack";
+import { getSettings } from "@/lib/models/settings";
+
+export const GET = async () => {
+  const user = await getAuthUser();
+  if (!user) return createErrorResponse("Unauthorized");
+  if (user.role !== "vendor") return createErrorResponse("Forbidden");
+
+  try {
+    await connectMongo();
+    const settings = await getSettings();
+
+    if (!settings.requireVendorSignupFee) {
+      return Response.json({ required: false, amountGhs: 0, status: "not_required", reference: null });
+    }
+
+    const fee = await getLatestSignupFee(user._id);
+
+    return Response.json({
+      required: true,
+      amountGhs: settings.vendorSignupFeeGhs,
+      status: fee?.status ?? "unpaid",
+      reference: fee?.reference ?? null,
+    });
+  } catch {
+    return createErrorResponse("SomethingWentWrong");
+  }
+};
+
+export const POST = async (req: Request) => {
+  const user = await getAuthUser();
+  if (!user) return createErrorResponse("Unauthorized");
+  if (user.role !== "vendor") return createErrorResponse("Forbidden");
+  if (user.status !== "pending") return createErrorResponse("Forbidden");
+
+  try {
+    await connectMongo();
+    const settings = await getSettings();
+
+    if (!settings.requireVendorSignupFee) {
+      return Response.json({ message: "Signup fee is not required" }, { status: 400 });
+    }
+    if (!settings.vendorSignupFeeGhs || settings.vendorSignupFeeGhs <= 0) {
+      return Response.json({ message: "Signup fee amount is not configured" }, { status: 400 });
+    }
+
+    const alreadyPaid = await VendorSignupFeeModel.exists({ vendorId: user._id, status: "success" });
+    if (alreadyPaid) {
+      return Response.json({ message: "Signup fee already paid" }, { status: 400 });
+    }
+
+    let reference = generateSignupFeeReference();
+    for (let i = 0; i < 4; i++) {
+      if (!(await VendorSignupFeeModel.exists({ reference }))) break;
+      reference = generateSignupFeeReference();
+    }
+
+    const fee = await VendorSignupFeeModel.create({
+      vendorId: user._id,
+      reference,
+      amountGhs: settings.vendorSignupFeeGhs,
+      status: "pending",
+    });
+
+    const origin = new URL(req.url).origin;
+
+    const paystack = await initializeTransaction({
+      email: user.email,
+      amount: fee.amountGhs,
+      reference: fee.reference,
+      callback_url: `${origin}/vendor/signup-fee?fee=success`,
+      metadata: {
+        signupFeeRef: fee.reference,
+        vendorId: String(user._id),
+      },
+    });
+
+    return Response.json({
+      paystackUrl: paystack.authorization_url,
+      reference: fee.reference,
+      amountGhs: fee.amountGhs,
+    }, { status: 201 });
+  } catch {
+    return Response.json({ message: "Something went wrong" }, { status: 500 });
+  }
+};

@@ -1,10 +1,17 @@
+"use client";
+
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
 import { Wordmark } from "@/components/ui/wordmark";
 import { Icon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { getMe } from "@/api";
 
 export default function PendingPage() {
+  const { data } = useQuery({ queryKey: getMe.key, queryFn: getMe.fn, retry: false });
+  const feePaid = data?.user.signupFeeRequired && data.user.signupFeeStatus === "success";
+
   return (
     <div className="min-h-screen bg-[var(--ink-50)] flex flex-col items-center justify-center px-6 py-10">
       <div className="max-w-[440px] w-full text-center">
@@ -18,8 +25,9 @@ export default function PendingPage() {
           Application under review.
         </h1>
         <p className="text-[var(--ink-500)] text-[15px] leading-relaxed mb-8">
-          Your vendor account has been created and is pending admin approval.
-          You&apos;ll be able to log in and start placing orders once approved.
+          {feePaid
+            ? "Your signup fee payment was received. Your vendor account is now pending admin approval — you'll be able to log in and start placing orders once approved."
+            : "Your vendor account has been created and is pending admin approval. You'll be able to log in and start placing orders once approved."}
         </p>
 
         <Card className="p-4 gap-0 rounded-[14px] border-[var(--ink-200)] bg-[var(--ink-100)] text-[13px] text-[var(--ink-600)] leading-relaxed text-left mb-7">

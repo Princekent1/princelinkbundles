@@ -29,13 +29,17 @@ export default function LoginPage() {
 
   const { mutate: loginMutation, isPending: isSubmitting } = useMutation({
     mutationFn: login.fn,
-    onSuccess: (data: { user: TokenPayload }) => {
+    onSuccess: (data: { user: TokenPayload; signupFeeRequired: boolean; signupFeeStatus: string | null }) => {
       setUser(data.user);
       if (data.user.role === "admin") {
         toast.success(<ToastMessage title="Login Successful!" />);
         router.push("/admin/dashboard");
       } else if (data.user.status === "pending") {
-        router.push("/pending");
+        if (data.signupFeeRequired && data.signupFeeStatus !== "success") {
+          router.push("/vendor/signup-fee");
+        } else {
+          router.push("/pending");
+        }
       } else {
         toast.success(<ToastMessage title="Login Successful!" />);
         router.push("/vendor/dashboard");

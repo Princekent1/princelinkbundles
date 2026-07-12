@@ -65,23 +65,25 @@ export const POST = async (request: NextRequest) => {
 
     const hashedPassword = await bcrypt.hash(password, 8);
     const settings = await getSettings();
+    const feePaymentRequired = settings.requireVendorSignupFee;
 
     const payload: User = {
       email,
       phone: parsedPhone,
       businessName,
       password: hashedPassword,
-      ...(settings.autoApproveVendors ? { status: "approved", approvedAt: new Date() } : {}),
+      ...(!feePaymentRequired && settings.autoApproveVendors ? { status: "approved", approvedAt: new Date() } : {}),
     };
 
     const createdUser = await UserModel.create(payload);
+    const autoApproved = !feePaymentRequired && settings.autoApproveVendors;
 
-    if (settings.autoApproveVendors) {
+    if (feePaymentRequired || autoApproved) {
       const tokenPayload: TokenPayload = {
         _id: createdUser._id.toString(),
         email: createdUser.email,
         role: createdUser.role ?? "vendor",
-        status: "approved",
+        status: createdUser.status ?? "pending",
         businessName: createdUser.businessName,
       };
       const token = await generateToken(tokenPayload);
@@ -93,7 +95,7 @@ export const POST = async (request: NextRequest) => {
         maxAge: 60 * 60 * 24 * 7,
         path: "/",
       });
-      return Response.json({ message: "success", autoApproved: true });
+      return Response.json({ message: "success", autoApproved, feePaymentRequired });
     }
 
     return Response.json({ message: "success" });

@@ -58,7 +58,7 @@ export default function AdminVendorDetailPage({ params }: { params: Promise<{ id
       invalidate();
       queryClient.invalidateQueries({ queryKey: ["admin", "vendors"] });
     },
-    onError: () => toast.error("Action failed, please try again"),
+    onError: (err: { message?: string }) => toast.error(err.message ?? "Action failed, please try again"),
   });
 
   const { mutate: doChangePassword, isPending: isChangingPwd } = useMutation({
@@ -116,6 +116,15 @@ export default function AdminVendorDetailPage({ params }: { params: Promise<{ id
               <Badge className={`rounded-full text-xs font-bold px-3 py-1 h-auto ${STATUS_BADGE_CLASS[vendor.status] ?? ""}`}>
                 {vendor.status.toUpperCase()}
               </Badge>
+              {vendor.signupFeeRequired && (
+                <Badge className={`rounded-full text-xs font-bold px-3 py-1 h-auto ${
+                  vendor.signupFeeStatus === "success"
+                    ? "bg-[var(--ok-bg)] text-[var(--ok)] border-transparent"
+                    : "bg-[var(--err-bg)] text-[var(--err)] border-transparent"
+                }`}>
+                  {vendor.signupFeeStatus === "success" ? "SIGNUP FEE PAID" : "SIGNUP FEE UNPAID"}
+                </Badge>
+              )}
             </div>
             <div className="text-sm text-[var(--ink-500)]">
               {vendor.email} · {vendor.phone} · Joined {new Date(vendor.createdAt).toLocaleDateString("en-GH", { day: "numeric", month: "short", year: "numeric" })}
@@ -126,7 +135,9 @@ export default function AdminVendorDetailPage({ params }: { params: Promise<{ id
             {vendor.status === "pending" && (
               <Button
                 onClick={() => setConfirmAction("approve")}
-                className="rounded-full px-[18px] py-2.5 h-auto text-[13px] font-semibold bg-[var(--ok)] hover:bg-[var(--ok)]/90 text-white"
+                disabled={vendor.signupFeeRequired && vendor.signupFeeStatus !== "success"}
+                title={vendor.signupFeeRequired && vendor.signupFeeStatus !== "success" ? "Vendor hasn't paid the signup fee yet" : undefined}
+                className="rounded-full px-[18px] py-2.5 h-auto text-[13px] font-semibold bg-[var(--ok)] hover:bg-[var(--ok)]/90 text-white disabled:opacity-50 disabled:pointer-events-auto"
               >
                 Approve vendor
               </Button>

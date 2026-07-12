@@ -1,6 +1,8 @@
 import { createErrorResponse } from "@/lib/errors";
 import { generateToken, TokenPayload } from "@/lib/jwt";
 import { UserModel } from "@/lib/models/user";
+import { getSettings } from "@/lib/models/settings";
+import { getLatestSignupFee } from "@/lib/models/vendor-signup-fee";
 import connectMongo from "@/lib/mongo";
 import { loginLimiter, getIp } from "@/lib/rate-limit";
 import { NextRequest } from "next/server";
@@ -75,7 +77,19 @@ export const POST = async (request: NextRequest) => {
       path: "/",
     });
 
-    return Response.json({ message: "success", user: payload });
+    let signupFeeRequired = false;
+    let signupFeeStatus: "unpaid" | "pending" | "success" | "failed" | null = null;
+
+    if (payload.role === "vendor" && payload.status === "pending") {
+      const settings = await getSettings();
+      signupFeeRequired = settings.requireVendorSignupFee;
+      if (signupFeeRequired) {
+        const fee = await getLatestSignupFee(existingUser._id);
+        signupFeeStatus = fee?.status ?? "unpaid";
+      }
+    }
+
+    return Response.json({ message: "success", user: payload, signupFeeRequired, signupFeeStatus });
   } catch (error) {
     return createErrorResponse("SomethingWentWrong");
   }

@@ -3,6 +3,8 @@ import { SignupFields } from "@/app/(auth)/signup/page";
 import axios, { AxiosError, isAxiosError } from "axios";
 import type { TokenPayload } from "@/lib/jwt";
 
+export type SignupFeeStatus = "unpaid" | "pending" | "success" | "failed" | null;
+
 export type MeUser = {
   _id: string;
   email: string;
@@ -11,6 +13,8 @@ export type MeUser = {
   walletBalance: number;
   role: string;
   status: string;
+  signupFeeRequired: boolean;
+  signupFeeStatus: SignupFeeStatus;
 };
 
 export type DashboardData = {
@@ -50,7 +54,7 @@ const throwError = (error: ApiError): never => {
 
 export const signUp = {
   key: ["signUp"],
-  fn: async (data: SignupFields): Promise<{ message: string; autoApproved?: boolean }> => {
+  fn: async (data: SignupFields): Promise<{ message: string; autoApproved?: boolean; feePaymentRequired?: boolean }> => {
     try {
       const res = await apiClient.post("/api/v1/auth/signup", data);
       return res.data;
@@ -182,7 +186,7 @@ export const logout = {
 
 export const login = {
   key: ["login"],
-  fn: async (data: LoginFields): Promise<{ message: string; user: TokenPayload }> => {
+  fn: async (data: LoginFields): Promise<{ message: string; user: TokenPayload; signupFeeRequired: boolean; signupFeeStatus: SignupFeeStatus }> => {
     try {
       const res = await apiClient.post("/api/v1/auth/login", data);
       return res.data;
@@ -487,6 +491,8 @@ export type AdminVendorDetail = {
     createdAt: string;
     approvedAt: string | null;
     suspendedAt: string | null;
+    signupFeeRequired: boolean;
+    signupFeeStatus: "unpaid" | "pending" | "success" | "failed" | null;
   };
   recentTxns: Array<{
     _id: string;
@@ -757,6 +763,54 @@ export const verifyTopup = {
   },
 };
 
+// ─── Vendor Signup Fee ────────────────────────────────────────────────────────
+
+export type SignupFeeStatusResult = {
+  required: boolean;
+  amountGhs: number;
+  status: "not_required" | "unpaid" | "pending" | "success" | "failed";
+  reference: string | null;
+};
+
+export const getSignupFeeStatus = {
+  key: ["vendor", "signup-fee", "status"],
+  fn: async (): Promise<SignupFeeStatusResult> => {
+    try {
+      const res = await apiClient.get("/api/v1/vendor/signup-fee");
+      return res.data;
+    } catch (error) {
+      return throwError(error as ApiError);
+    }
+  },
+};
+
+export const initSignupFee = {
+  fn: async (): Promise<{ paystackUrl: string; reference: string; amountGhs: number }> => {
+    try {
+      const res = await apiClient.post("/api/v1/vendor/signup-fee");
+      return res.data;
+    } catch (error) {
+      return throwError(error as ApiError);
+    }
+  },
+};
+
+export type VerifySignupFeeResult =
+  | { paid: true; approved: boolean }
+  | { paid: false; paystackStatus: string }
+  | { alreadyProcessed: true; status: string };
+
+export const verifySignupFee = {
+  fn: async (reference: string): Promise<VerifySignupFeeResult> => {
+    try {
+      const res = await apiClient.post("/api/v1/vendor/signup-fee/verify", { reference });
+      return res.data;
+    } catch (error) {
+      return throwError(error as ApiError);
+    }
+  },
+};
+
 // ─── Auth: Change Password ───────────────────────────────────────────────────
 
 export const changePassword = {
@@ -845,6 +899,8 @@ export type FulfillmentSettings = {
   contactPhone: string;
   whatsappCommunityUrl: string;
   disabledNetworks: string[];
+  requireVendorSignupFee: boolean;
+  vendorSignupFeeGhs: number;
   paystackFeeRateBps: number;
   jaybartBalance: string | null;
 };
@@ -862,7 +918,7 @@ export const getFulfillmentSettings = {
 };
 
 export const updateFulfillmentSettings = {
-  fn: async (data: Partial<Pick<FulfillmentSettings, "autoSendVendors" | "autoSendGuests" | "autoApproveVendors" | "passPaystackFeesToCustomers" | "contactPhone" | "whatsappCommunityUrl" | "disabledNetworks">>): Promise<Omit<FulfillmentSettings, "jaybartBalance" | "paystackFeeRateBps">> => {
+  fn: async (data: Partial<Pick<FulfillmentSettings, "autoSendVendors" | "autoSendGuests" | "autoApproveVendors" | "passPaystackFeesToCustomers" | "contactPhone" | "whatsappCommunityUrl" | "disabledNetworks" | "requireVendorSignupFee" | "vendorSignupFeeGhs">>): Promise<Omit<FulfillmentSettings, "jaybartBalance" | "paystackFeeRateBps">> => {
     try {
       const res = await apiClient.patch("/api/v1/admin/settings", data);
       return res.data;

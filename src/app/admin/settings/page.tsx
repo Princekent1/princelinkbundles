@@ -48,17 +48,22 @@ export default function AdminSettingsPage() {
 
   const [contactPhone, setContactPhone] = useState("");
   const [whatsappUrl, setWhatsappUrl] = useState("");
+  const [signupFeeGhs, setSignupFeeGhs] = useState("");
 
   useEffect(() => {
     if (fulfillment) {
       setContactPhone(fulfillment.contactPhone ?? "");
       setWhatsappUrl(fulfillment.whatsappCommunityUrl ?? "");
+      setSignupFeeGhs(String((fulfillment.vendorSignupFeeGhs ?? 0) / 100));
     }
   }, [fulfillment]);
 
   const contactDirty =
     contactPhone !== (fulfillment?.contactPhone ?? "") ||
     whatsappUrl !== (fulfillment?.whatsappCommunityUrl ?? "");
+
+  const signupFeeDirty =
+    Math.round((parseFloat(signupFeeGhs) || 0) * 100) !== (fulfillment?.vendorSignupFeeGhs ?? 0);
 
   const { mutate: saveContact, isPending: savingContact } = useMutation({
     mutationFn: () => updateFulfillmentSettings.fn({ contactPhone, whatsappCommunityUrl: whatsappUrl }),
@@ -86,6 +91,15 @@ export default function AdminSettingsPage() {
       queryClient.invalidateQueries({ queryKey: getFulfillmentSettings.key });
     },
     onError: (err: { message: string }) => toast.error(err.message ?? "Failed to update settings"),
+  });
+
+  const { mutate: saveSignupFee, isPending: savingSignupFee } = useMutation({
+    mutationFn: () => updateFulfillmentSettings.fn({ vendorSignupFeeGhs: Math.round((parseFloat(signupFeeGhs) || 0) * 100) }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: getFulfillmentSettings.key });
+      toast.success("Signup fee amount saved");
+    },
+    onError: (err: { message: string }) => toast.error(err.message ?? "Failed to save"),
   });
 
   function handlePasswordSubmit(e: React.FormEvent) {
@@ -186,6 +200,44 @@ export default function AdminSettingsPage() {
               onChange={(v) => updateSettings({ autoApproveVendors: v })}
             />
           </div>
+
+          <div className="h-px bg-[var(--ink-100)] my-4" />
+
+          <div className="flex items-center justify-between gap-4 mb-4">
+            <div>
+              <div className="font-semibold text-sm">Require signup fee</div>
+              <div className="text-xs text-[var(--ink-500)] mt-0.5">
+                New vendors must pay a fee via Paystack before their application is reviewed (or auto-approved)
+              </div>
+            </div>
+            <ToggleSwitch
+              checked={fulfillment?.requireVendorSignupFee ?? false}
+              disabled={fulfillmentLoading}
+              onChange={(v) => updateSettings({ requireVendorSignupFee: v })}
+            />
+          </div>
+
+          {fulfillment?.requireVendorSignupFee && (
+            <div className="flex flex-wrap gap-2.5 items-end">
+              <div className="flex-1 min-w-[160px] flex flex-col gap-1.5">
+                <Label className="text-[13px] font-semibold text-[var(--ink-700)]">Signup fee amount (GHS)</Label>
+                <Input
+                  type="number"
+                  value={signupFeeGhs}
+                  onChange={e => setSignupFeeGhs(e.target.value)}
+                  placeholder="e.g. 50"
+                  className="h-auto rounded-xl border-[var(--ink-200)] bg-[var(--ink-100)] px-3.5 py-3 text-[15px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)]"
+                />
+              </div>
+              <Button
+                onClick={() => saveSignupFee()}
+                disabled={!signupFeeDirty || savingSignupFee}
+                className="rounded-full px-6 py-3.5 h-auto text-sm font-semibold gap-2 bg-[var(--brand-500)] hover:bg-[var(--brand-600)] shadow-none disabled:opacity-50"
+              >
+                {savingSignupFee ? "Saving…" : "Save"}
+              </Button>
+            </div>
+          )}
         </Card>
 
         <Card className="p-4 md:p-6 gap-0 rounded-2xl border-[var(--ink-200)] mb-5">

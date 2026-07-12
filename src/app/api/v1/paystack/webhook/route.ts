@@ -6,6 +6,7 @@ import { OrderModel } from "@/lib/models/order";
 import { UserModel } from "@/lib/models/user";
 import { WalletTopupModel } from "@/lib/models/wallet-topup";
 import { WalletTransactionModel } from "@/lib/models/wallet-transaction";
+import { VendorSignupFeeModel } from "@/lib/models/vendor-signup-fee";
 import { PaymentEventModel } from "@/lib/models/payment-event";
 import { BundleModel, type Bundle } from "@/lib/models/bundle";
 import { verifyWebhookSignature } from "@/lib/paystack";
@@ -61,6 +62,8 @@ export const POST = async (req: Request) => {
       const paystackAmountGhs = typeof payload.data.amount === "number" ? payload.data.amount : null;
       if (reference.startsWith("TP")) {
         await handleTopupSuccess(reference, paystackEventId, paystackAmountGhs);
+      } else if (reference.startsWith("SF")) {
+        await handleSignupFeeSuccess(reference, paystackAmountGhs);
       } else {
         await handleOrderSuccess(reference, paystackAmountGhs);
       }
@@ -75,6 +78,8 @@ export const POST = async (req: Request) => {
     try {
       if (reference.startsWith("TP")) {
         await handleTopupFailed(reference);
+      } else if (reference.startsWith("SF")) {
+        await handleSignupFeeFailed(reference);
       }
       processed = true;
     } catch (err) {
@@ -126,6 +131,32 @@ async function handleTopupFailed(reference: string) {
     { reference, status: "pending" },
     { status: "failed" }
   );
+}
+
+async function handleSignupFeeFailed(reference: string) {
+  await VendorSignupFeeModel.updateOne(
+    { reference, status: "pending" },
+    { status: "failed" }
+  );
+}
+
+async function handleSignupFeeSuccess(reference: string, paystackAmountGhs: number | null) {
+  const fee = await VendorSignupFeeModel.findOneAndUpdate(
+    { reference, status: "pending" },
+    {
+      status: "success",
+      paystackReference: reference,
+      paidAt: new Date(),
+      ...(paystackAmountGhs !== null ? { paystackAmountGhs } : {}),
+    },
+    { new: true }
+  );
+  if (!fee) return;
+
+  const settings = await getSettings();
+  if (settings.autoApproveVendors) {
+    await UserModel.findByIdAndUpdate(fee.vendorId, { status: "approved", approvedAt: new Date() });
+  }
 }
 
 async function handleTopupSuccess(reference: string, paystackEventId: string, paystackAmountGhs: number | null) {

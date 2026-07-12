@@ -3,6 +3,8 @@ import { getAuthUser } from "@/lib/get-auth-user";
 import { OrderModel } from "@/lib/models/order";
 import { UserModel } from "@/lib/models/user";
 import { WalletTransactionModel } from "@/lib/models/wallet-transaction";
+import { getLatestSignupFee } from "@/lib/models/vendor-signup-fee";
+import { getSettings } from "@/lib/models/settings";
 import connectMongo from "@/lib/mongo";
 import mongoose from "mongoose";
 
@@ -17,7 +19,7 @@ export const GET = async (_req: Request, { params }: { params: Promise<{ id: str
 
     const vendorId = new mongoose.Types.ObjectId(id);
 
-    const [vendor, recentTxns, recentOrders] = await Promise.all([
+    const [vendor, recentTxns, recentOrders, settings, signupFee] = await Promise.all([
       UserModel.findOne({ _id: vendorId, role: "vendor" })
         .select("businessName email phone walletBalance status createdAt approvedAt suspendedAt")
         .lean(),
@@ -30,6 +32,8 @@ export const GET = async (_req: Request, { params }: { params: Promise<{ id: str
         .limit(10)
         .select("reference networkSnapshot bundleNameSnapshot amountGhs status createdAt")
         .lean(),
+      getSettings(),
+      getLatestSignupFee(vendorId),
     ]);
 
     if (!vendor) return createErrorResponse("NotFound");
@@ -41,6 +45,8 @@ export const GET = async (_req: Request, { params }: { params: Promise<{ id: str
         email: vendor.email,
         phone: vendor.phone,
         walletBalance: vendor.walletBalance ?? 0,
+        signupFeeRequired: settings.requireVendorSignupFee,
+        signupFeeStatus: settings.requireVendorSignupFee ? (signupFee?.status ?? "unpaid") : null,
         status: vendor.status,
         createdAt: vendor.createdAt,
         approvedAt: vendor.approvedAt ?? null,
@@ -84,6 +90,16 @@ export const PATCH = async (req: Request, { params }: { params: Promise<{ id: st
     }
 
     await connectMongo();
+
+    if (action === "approve") {
+      const settings = await getSettings();
+      if (settings.requireVendorSignupFee) {
+        const fee = await getLatestSignupFee(id);
+        if (fee?.status !== "success") {
+          return Response.json({ message: "Vendor has not completed the signup fee payment yet" }, { status: 400 });
+        }
+      }
+    }
 
     const adminId = new mongoose.Types.ObjectId(authUser._id);
     const now = new Date();

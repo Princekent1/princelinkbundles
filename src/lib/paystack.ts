@@ -66,3 +66,11 @@ export function generateTopupReference(): string {
   for (const b of bytes) ref += chars[b % 62];
   return ref;
 }
+
+export function generateSignupFeeReference(): string {
+  const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  let ref = "SF";
+  const bytes = crypto.getRandomValues(new Uint8Array(6));
+  for (const b of bytes) ref += chars[b % 62];
+  return ref;
+}

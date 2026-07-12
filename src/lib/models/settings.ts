@@ -8,6 +8,8 @@ export type Settings = {
   contactPhone: string;
   whatsappCommunityUrl: string;
   disabledNetworks: string[];
+  requireVendorSignupFee: boolean;
+  vendorSignupFeeGhs: number; // pesewas
 };
 
 const schema = new mongoose.Schema<Settings>({
@@ -18,6 +20,8 @@ const schema = new mongoose.Schema<Settings>({
   contactPhone: { type: String, default: "" },
   whatsappCommunityUrl: { type: String, default: "" },
   disabledNetworks: { type: [String], enum: ["mtn", "telecel", "airteltigo"], default: [] },
+  requireVendorSignupFee: { type: Boolean, default: false },
+  vendorSignupFeeGhs: { type: Number, default: 0 }, // pesewas
 });
 
 export const SettingsModel =
@@ -33,5 +37,7 @@ export async function getSettings(): Promise<Settings> {
     contactPhone: doc?.contactPhone ?? "",
     whatsappCommunityUrl: doc?.whatsappCommunityUrl ?? "",
     disabledNetworks: doc?.disabledNetworks ?? [],
+    requireVendorSignupFee: doc?.requireVendorSignupFee ?? false,
+    vendorSignupFeeGhs: doc?.vendorSignupFeeGhs ?? 0,
   };
 }

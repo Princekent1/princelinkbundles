@@ -33,6 +33,9 @@ export default function SignupPage() {
       if (data.autoApproved) {
         toast.success(<ToastMessage title="Account approved!" description="Welcome aboard." />);
         router.push("/vendor/dashboard");
+      } else if (data.feePaymentRequired) {
+        toast.success(<ToastMessage title="Sign up successful!" description="One more step — pay the signup fee." />);
+        router.push("/vendor/signup-fee");
       } else {
         toast.success(<ToastMessage title="Sign up successful!" />);
         router.push("/pending");

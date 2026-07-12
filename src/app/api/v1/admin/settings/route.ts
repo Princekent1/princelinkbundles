@@ -29,6 +29,8 @@ export const GET = async () => {
       contactPhone: s?.contactPhone ?? "",
       whatsappCommunityUrl: s?.whatsappCommunityUrl ?? "",
       disabledNetworks: s?.disabledNetworks ?? [],
+      requireVendorSignupFee: s?.requireVendorSignupFee ?? false,
+      vendorSignupFeeGhs: s?.vendorSignupFeeGhs ?? 0,
       paystackFeeRateBps: PAYSTACK_FEE_RATE_BPS,
       jaybartBalance: b,
     });
@@ -53,6 +55,10 @@ export const PATCH = async (req: Request) => {
     }
     if (typeof body.contactPhone === "string") update.contactPhone = body.contactPhone.trim();
     if (typeof body.whatsappCommunityUrl === "string") update.whatsappCommunityUrl = body.whatsappCommunityUrl.trim();
+    if (typeof body.requireVendorSignupFee === "boolean") update.requireVendorSignupFee = body.requireVendorSignupFee;
+    if (typeof body.vendorSignupFeeGhs === "number" && Number.isInteger(body.vendorSignupFeeGhs) && body.vendorSignupFeeGhs >= 0) {
+      update.vendorSignupFeeGhs = body.vendorSignupFeeGhs;
+    }
     if (Array.isArray(body.disabledNetworks)) {
       const VALID_NETWORKS = ["mtn", "telecel", "airteltigo"];
       update.disabledNetworks = body.disabledNetworks.filter(
@@ -80,6 +86,8 @@ export const PATCH = async (req: Request) => {
       contactPhone: settings!.contactPhone ?? "",
       whatsappCommunityUrl: settings!.whatsappCommunityUrl ?? "",
       disabledNetworks: settings!.disabledNetworks ?? [],
+      requireVendorSignupFee: settings!.requireVendorSignupFee ?? false,
+      vendorSignupFeeGhs: settings!.vendorSignupFeeGhs ?? 0,
     });
   } catch {
     return createErrorResponse("SomethingWentWrong");

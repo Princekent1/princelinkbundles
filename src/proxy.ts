@@ -29,7 +29,7 @@ export function proxy(req: NextRequest) {
   if (pathname === "/login" || pathname === "/signup") {
     if (!s) return NextResponse.next();
     if (s.role === "admin") return to(req, "/admin/dashboard");
-    if (s.status === "pending") return to(req, "/pending");
+    if (s.status === "pending") return to(req, "/vendor/signup-fee");
     return to(req, "/vendor/dashboard");
   }
 
@@ -49,6 +49,7 @@ export function proxy(req: NextRequest) {
   if (pathname.startsWith("/vendor")) {
     if (!s) return to(req, "/login");
     if (s.role === "admin") return to(req, "/admin/dashboard");
+    if (pathname === "/vendor/signup-fee") return NextResponse.next();
     if (s.status !== "approved") return to(req, "/pending");
     return NextResponse.next();
   }
