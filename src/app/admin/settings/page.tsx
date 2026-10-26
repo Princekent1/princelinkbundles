@@ -20,7 +20,7 @@ function ToggleSwitch({ checked, onChange, disabled }: { checked: boolean; onCha
       disabled={disabled}
       onClick={() => onChange(!checked)}
       className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed ${
-        checked ? "bg-[var(--brand-500)]" : "bg-[var(--ink-200)]"
+        checked ? "bg-[var(--brand-500)]" : "bg-[var(--ink-300)]"
       }`}
     >
       <span
@@ -182,7 +182,7 @@ export default function AdminSettingsPage() {
                   disabled={fulfillmentLoading}
                   onClick={() => updateSettings({ paymentMode: opt.value })}
                   className={`rounded-xl border px-3 py-2.5 text-left disabled:opacity-50 ${
-                    (fulfillment?.paymentMode ?? "paystack") === opt.value ? "border-[var(--brand-500)] bg-[var(--brand-50)]" : "border-[var(--ink-200)] bg-white"
+                    (fulfillment?.paymentMode ?? "paystack") === opt.value ? "border-[var(--brand-500)] bg-[var(--brand-50)]" : "border-[var(--ink-200)] bg-[var(--ink-100)]"
                   }`}
                 >
                   <div className="text-sm font-semibold">{opt.label}</div>

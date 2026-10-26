@@ -155,7 +155,7 @@ export default function AdminOrderDetailPage({ params }: { params: Promise<{ id:
         {(canComplete || canFail || canCancel) && (
           <div
             className="mt-5 p-4 md:p-6 rounded-2xl border border-[var(--brand-100)]"
-            style={{ background: "linear-gradient(180deg, var(--brand-50) 0%, white 100%)" }}
+            style={{ background: "linear-gradient(180deg, var(--brand-50) 0%, var(--ink-100) 100%)" }}
           >
             <div className="flex flex-wrap justify-between items-start gap-4">
               <div>

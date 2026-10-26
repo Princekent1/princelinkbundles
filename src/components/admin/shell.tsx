@@ -62,7 +62,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 h-screen z-40 w-[240px] bg-[var(--ink-50)]
+          fixed top-0 left-0 h-screen z-40 w-[240px] bg-[var(--sidebar)]
           border-r border-[var(--ink-200)] flex flex-col shrink-0
           transition-transform duration-200 ease-in-out
           md:sticky md:translate-x-0

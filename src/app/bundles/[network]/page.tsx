@@ -105,7 +105,7 @@ export default function BundlesPage() {
         )}
       </div>
 
-      <div className="fixed left-0 right-0 bottom-0 p-4 bg-[var(--ink-100)] border-t border-[var(--ink-200)] shadow-[0_-8px_24px_rgba(11,18,32,0.04)] flex justify-center">
+      <div className="fixed left-0 right-0 bottom-0 p-4 bg-[var(--ink-100)] border-t border-[var(--ink-200)] shadow-[0_-8px_24px_rgba(90,70,40,0.08)] flex justify-center">
         <div className="w-full max-w-[448px]">
           <Button
             disabled={!selected}

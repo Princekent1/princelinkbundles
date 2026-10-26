@@ -92,13 +92,13 @@ export default function AdminDashboardPage() {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
           {[
-            { label: "Pending orders",    value: isLoading ? "—" : String(pendingCount),                  accent: "var(--bh-accent-500)" },
-            { label: "Today's revenue",   value: isLoading ? "—" : ghsp(dashboard?.todayRevenue ?? 0),    accent: "var(--brand-500)" },
-            { label: "Paid orders today", value: isLoading ? "—" : String(dashboard?.ordersToday ?? 0),   accent: "var(--ink-500)" },
-            { label: "All-time revenue",  value: isLoading ? "—" : ghsp(dashboard?.allTimeRevenue ?? 0),  accent: "var(--ok)" },
+            { label: "Pending orders",    value: isLoading ? "—" : String(pendingCount) },
+            { label: "Today's revenue",   value: isLoading ? "—" : ghsp(dashboard?.todayRevenue ?? 0) },
+            { label: "Paid orders today", value: isLoading ? "—" : String(dashboard?.ordersToday ?? 0) },
+            { label: "All-time revenue",  value: isLoading ? "—" : ghsp(dashboard?.allTimeRevenue ?? 0) },
           ].map((s) => (
             <Card key={s.label} className="p-4 md:p-6 gap-0 rounded-2xl border-[var(--ink-200)] relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-1 h-full" style={{ background: s.accent }} />
+              <div className="absolute top-0 left-0 w-1 h-full" style={{ background: "var(--brand-500)" }} />
               <div className="text-xs text-[var(--ink-500)] font-semibold uppercase tracking-wide">{s.label}</div>
               <div className="bh-display text-[24px] md:text-[32px] tracking-[-0.02em] mt-1.5">{s.value}</div>
             </Card>
@@ -108,7 +108,7 @@ export default function AdminDashboardPage() {
         {(isLoading || dashboard !== undefined) && (
           <div className="mt-3">
             <Card className="p-4 md:p-6 gap-0 rounded-2xl border-[var(--ink-200)] relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-1 h-full" style={{ background: "var(--ok)" }} />
+              <div className="absolute top-0 left-0 w-1 h-full" style={{ background: "var(--brand-500)" }} />
               <div className="text-xs text-[var(--ink-500)] font-semibold uppercase tracking-wide mb-3">Gross profit — completed orders</div>
               {isLoading ? (
                 <div className="h-6 w-40 bg-[var(--ink-100)] rounded animate-pulse" />

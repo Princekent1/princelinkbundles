@@ -108,7 +108,7 @@ export default function OrderStatusResultPage() {
   const isFailed = order?.status === "failed" || order?.status === "cancelled";
 
   return (
-    <div style={{ minHeight: "100vh", background: "white" }}>
+    <div style={{ minHeight: "100vh", background: "var(--ink-50)" }}>
       <VendorFlowBar />
       <div style={{ maxWidth: 480, margin: "0 auto", padding: "24px 24px 40px" }}>
         <Button asChild variant="ghost" size="sm" className="px-0 gap-1.5">
@@ -125,7 +125,7 @@ export default function OrderStatusResultPage() {
         </div>
 
         {loading && (
-          <div style={{ marginTop: 20, padding: 20, background: "white", borderRadius: 16, border: "1px solid var(--ink-200)" }}>
+          <div style={{ marginTop: 20, padding: 20, background: "var(--ink-100)", borderRadius: 16, border: "1px solid var(--ink-200)" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               {[80, 60, 70].map((w, i) => (
                 <div key={i} style={{ display: "flex", gap: 14, alignItems: "center" }}>
@@ -138,7 +138,7 @@ export default function OrderStatusResultPage() {
         )}
 
         {!loading && notFound && (
-          <div style={{ marginTop: 20, padding: 20, background: "white", borderRadius: 16, border: "1px solid var(--ink-200)", textAlign: "center" }}>
+          <div style={{ marginTop: 20, padding: 20, background: "var(--ink-100)", borderRadius: 16, border: "1px solid var(--ink-200)", textAlign: "center" }}>
             <div style={{ fontWeight: 700, fontSize: 15, color: "var(--ink-900)" }}>Order not found</div>
             <div style={{ fontSize: 13, color: "var(--ink-500)", marginTop: 6 }}>
               Double-check the reference and try again.
@@ -147,11 +147,11 @@ export default function OrderStatusResultPage() {
         )}
 
         {!loading && order && isFailed && (
-          <div style={{ marginTop: 20, padding: 20, background: "white", borderRadius: 16, border: "1px solid var(--ink-200)" }}>
+          <div style={{ marginTop: 20, padding: 20, background: "var(--ink-100)", borderRadius: 16, border: "1px solid var(--ink-200)" }}>
             <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
               <div style={{
                 width: 28, height: 28, borderRadius: "50%", flexShrink: 0,
-                background: "var(--error-bg, #FEF2F2)", border: "2px solid var(--error, #EF4444)",
+                background: "var(--err-bg)", border: "2px solid var(--err)",
                 display: "grid", placeItems: "center",
               }}>
                 <Icon name="x" size={14} />
@@ -168,7 +168,7 @@ export default function OrderStatusResultPage() {
 
         {!loading && order && !isFailed && (
           <div style={{
-            marginTop: 20, padding: 20, background: "white",
+            marginTop: 20, padding: 20, background: "var(--ink-100)",
             borderRadius: 16, border: "1px solid var(--ink-200)",
           }}>
             {PHASES.map((phase, i) => {

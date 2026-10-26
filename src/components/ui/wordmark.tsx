@@ -15,7 +15,7 @@ export function Wordmark({ small }: WordmarkProps) {
       style={{ textDecoration: "none", display: "inline-flex", alignItems: "center" }}
     >
       <Image
-        src="/logo-lockup.png"
+        src="/logo-lockup-light.png"
         alt="Prince K Ventures"
         height={h}
         width={h * 4.2}

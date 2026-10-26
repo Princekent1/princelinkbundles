@@ -56,7 +56,7 @@ function SuccessContent() {
 
         <div style={{
           padding: 24, borderRadius: 20,
-          background: "linear-gradient(160deg, var(--brand-500) 0%, var(--ink-200) 100%)",
+          background: "linear-gradient(160deg, var(--brand-500) 0%, var(--brand-600) 100%)",
           color: "white", boxShadow: "var(--shadow-lg)",
         }}>
           <div style={{

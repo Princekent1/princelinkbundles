@@ -60,7 +60,7 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full" style={{ background: "#0b1121", color: "#94a3b8" }}>
+      <body className="min-h-full" style={{ background: "var(--background)", color: "var(--foreground)" }}>
         <AppProvider>
           {children}
         </AppProvider>

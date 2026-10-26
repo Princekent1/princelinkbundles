@@ -338,7 +338,7 @@ export default function AdminBundlesPage() {
                   : "bg-transparent text-[var(--ink-500)] hover:text-[var(--ink-700)] hover:bg-transparent"
               }`}
             >
-              {tab.label} <span className={view === tab.id ? "text-white/60" : "text-[var(--ink-400)]"}>{tab.count}</span>
+              {tab.label} <span className={view === tab.id ? "text-[var(--ink-600)]" : "text-[var(--ink-400)]"}>{tab.count}</span>
             </Button>
           ))}
         </div>

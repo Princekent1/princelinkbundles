@@ -47,33 +47,33 @@ function QuickBuyWidget() {
     <div className="relative flex justify-center">
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[400px] rounded-full pointer-events-none"
-        style={{ background: "rgba(0,229,255,0.12)", filter: "blur(100px)" }}
+        style={{ background: "var(--brand-100)", filter: "blur(100px)" }}
       />
       <div
-        className="relative z-10 w-full max-w-[420px] rounded-xl p-8 shadow-2xl"
-        style={{ background: "#0f172a", border: "1px solid rgba(71,85,105,0.8)" }}
+        className="relative z-10 w-full max-w-[420px] rounded-xl p-8"
+        style={{ background: "var(--ink-100)", border: "1px solid var(--ink-200)", boxShadow: "var(--shadow-lg)" }}
       >
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h3 className="font-bold text-lg text-white">Prince K Ventures</h3>
-            <p className="text-xs mt-0.5" style={{ color: "#94a3b8" }}>Pick a bundle below</p>
+            <h3 className="font-bold text-lg" style={{ color: "var(--ink-900)" }}>Prince K Ventures</h3>
+            <p className="text-xs mt-0.5" style={{ color: "var(--ink-500)" }}>Pick a bundle below</p>
           </div>
           <div className="flex gap-1 items-center">
-            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#00e5ff", boxShadow: "0 0 6px rgba(0,229,255,0.8)" }} />
-            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#334155" }} />
-            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#334155" }} />
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--brand-500)" }} />
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--ink-300)" }} />
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--ink-300)" }} />
           </div>
         </div>
 
-        <div className="flex mb-6" style={{ borderBottom: "1px solid rgba(71,85,105,0.8)" }}>
+        <div className="flex mb-6" style={{ borderBottom: "1px solid var(--ink-200)" }}>
           {NETWORKS.map(net => (
             <button
               key={net.id}
               onClick={() => setActiveNetwork(net.id)}
               className="flex-1 pb-4 text-sm font-bold transition-colors"
               style={activeNetwork === net.id
-                ? { borderBottom: "2px solid #00e5ff", color: "#00e5ff" }
-                : { color: "#94a3b8", cursor: "pointer" }}
+                ? { borderBottom: "2px solid var(--brand-500)", color: "var(--brand-500)" }
+                : { color: "var(--ink-500)", cursor: "pointer" }}
             >
               {net.label}
             </button>
@@ -86,12 +86,12 @@ function QuickBuyWidget() {
                 <div
                   key={i}
                   className="animate-pulse rounded-lg"
-                  style={{ height: 64, background: "rgba(30,41,59,0.5)", border: "1px solid rgba(71,85,105,0.4)" }}
+                  style={{ height: 64, background: "var(--ink-50)", border: "1px solid var(--ink-200)" }}
                 />
               ))
             : bundles.length === 0
             ? (
-                <p className="text-center py-6 text-sm" style={{ color: "#94a3b8" }}>
+                <p className="text-center py-6 text-sm" style={{ color: "var(--ink-500)" }}>
                   No bundles available
                 </p>
               )
@@ -99,13 +99,13 @@ function QuickBuyWidget() {
                 <div
                   key={b._id}
                   className="flex justify-between items-center p-4 rounded-lg"
-                  style={{ border: "1px solid rgba(71,85,105,0.8)", background: "rgba(30,41,59,0.5)" }}
+                  style={{ border: "1px solid var(--ink-200)", background: "var(--ink-50)" }}
                 >
                   <div>
-                    <p className="font-bold text-lg text-white">{b.name}</p>
-                    <p className="text-xs" style={{ color: "#94a3b8" }}>{b.validity}</p>
+                    <p className="font-bold text-lg" style={{ color: "var(--ink-900)" }}>{b.name}</p>
+                    <p className="text-xs" style={{ color: "var(--ink-500)" }}>{b.validity}</p>
                   </div>
-                  <p className="font-bold text-white">{ghsp(b.priceGhs)}</p>
+                  <p className="font-bold" style={{ color: "var(--ink-900)" }}>{ghsp(b.priceGhs)}</p>
                 </div>
               ))
           }
@@ -114,7 +114,7 @@ function QuickBuyWidget() {
         <button
           onClick={() => router.push(`/bundles/${activeNetwork}`)}
           className="w-full py-4 font-bold text-sm text-white rounded-lg flex justify-center items-center transition-all"
-          style={{ background: "#2563eb", boxShadow: "0 0 15px rgba(37,99,235,0.5)", cursor: "pointer" }}
+          style={{ background: "var(--brand-500)", boxShadow: "0 6px 16px rgba(37,99,235,0.25)", cursor: "pointer" }}
         >
           Buy {networkLabel} bundle →
         </button>
@@ -143,16 +143,16 @@ export function LandingPage({ user }: { user: TokenPayload | null }) {
   const contactPhone = publicSettings?.contactPhone ?? "";
 
   return (
-    <div className="min-h-screen" style={{ background: "#0b1121", color: "#94a3b8", fontFamily: "var(--font-inter), sans-serif" }}>
+    <div className="min-h-screen" style={{ background: "var(--ink-50)", color: "var(--ink-600)", fontFamily: "var(--font-inter), sans-serif" }}>
       <style>{`
         .pk-grid {
           background-image:
-            linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
+            linear-gradient(to right, rgba(90,70,40,0.06) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(90,70,40,0.06) 1px, transparent 1px);
           background-size: 32px 32px;
         }
         .pk-text-gradient {
-          background: linear-gradient(to right, #60a5fa, #00e5ff, #5eead4);
+          background: linear-gradient(to right, #1d4ed8, #3b82f6, #0e7490);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
@@ -162,11 +162,11 @@ export function LandingPage({ user }: { user: TokenPayload | null }) {
       {/* Nav */}
       <nav
         className="w-full h-20 flex items-center sticky top-0 z-50"
-        style={{ background: "rgba(11,17,33,0.8)", backdropFilter: "blur(12px)", borderBottom: "1px solid rgba(30,41,59,1)" }}
+        style={{ background: "rgba(250,246,238,0.85)", backdropFilter: "blur(12px)", borderBottom: "1px solid var(--ink-200)" }}
       >
         <div className="flex justify-between items-center w-full max-w-[1200px] mx-auto px-10">
           <Link href="/" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center" }}>
-            <Image src="/logo-lockup.png" alt="Prince K Ventures" height={32} width={135} priority style={{ objectFit: "contain", objectPosition: "left center" }} />
+            <Image src="/logo-lockup-light.png" alt="Prince K Ventures" height={32} width={135} priority style={{ objectFit: "contain", objectPosition: "left center" }} />
           </Link>
 
           <div className="flex items-center gap-1.5">
@@ -174,7 +174,7 @@ export function LandingPage({ user }: { user: TokenPayload | null }) {
               asChild
               variant="ghost"
               className="hidden sm:inline-flex rounded-lg text-sm font-semibold"
-              style={{ color: "#cbd5e1" }}
+              style={{ color: "var(--ink-700)" }}
             >
               <Link href="/order-status">Check order</Link>
             </Button>
@@ -183,7 +183,7 @@ export function LandingPage({ user }: { user: TokenPayload | null }) {
                 <Button
                   asChild
                   className="rounded-lg text-sm font-semibold text-white"
-                  style={{ background: "#1e293b", border: "1px solid rgba(71,85,105,0.8)" }}
+                  style={{ background: "var(--brand-500)" }}
                 >
                   <Link href={dashboardHref}>Dashboard</Link>
                 </Button>
@@ -191,7 +191,7 @@ export function LandingPage({ user }: { user: TokenPayload | null }) {
                   onClick={handleLogout}
                   variant="ghost"
                   className="rounded-lg text-sm font-semibold"
-                  style={{ color: "#94a3b8" }}
+                  style={{ color: "var(--ink-500)" }}
                 >
                   Sign out
                 </Button>
@@ -201,7 +201,7 @@ export function LandingPage({ user }: { user: TokenPayload | null }) {
                 <Button
                   asChild
                   className="rounded-lg text-sm font-semibold text-white"
-                  style={{ background: "#1e293b", border: "1px solid rgba(71,85,105,0.8)" }}
+                  style={{ background: "var(--brand-500)" }}
                 >
                   <Link href="/login">Sign in</Link>
                 </Button>
@@ -209,7 +209,7 @@ export function LandingPage({ user }: { user: TokenPayload | null }) {
                   asChild
                   variant="ghost"
                   className="hidden md:inline-flex rounded-lg text-xs font-semibold"
-                  style={{ color: "#64748b" }}
+                  style={{ color: "var(--ink-500)" }}
                 >
                   <Link href="/admin/login">Admin</Link>
                 </Button>
@@ -220,24 +220,24 @@ export function LandingPage({ user }: { user: TokenPayload | null }) {
       </nav>
 
       {/* Hero */}
-      <section className="py-24 relative overflow-hidden" style={{ background: "#0b1121" }}>
+      <section className="py-24 relative overflow-hidden" style={{ background: "var(--ink-50)" }}>
         <div className="pk-grid absolute inset-0" />
         <div
           className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full pointer-events-none"
-          style={{ background: "rgba(37,99,235,0.18)", filter: "blur(120px)" }}
+          style={{ background: "var(--brand-100)", filter: "blur(120px)" }}
         />
 
         <div className="max-w-[1200px] mx-auto px-10 flex flex-col items-center text-center relative z-10">
           <motion.div {...fadeUp(0)}>
             <div
               className="inline-flex items-center px-3 py-1 rounded-full mb-8"
-              style={{ background: "rgba(30,41,59,0.8)", border: "1px solid rgba(71,85,105,1)" }}
+              style={{ background: "var(--ink-100)", border: "1px solid var(--ink-200)" }}
             >
               <span
                 className="w-2 h-2 rounded-full mr-2"
-                style={{ background: "#34d399", boxShadow: "0 0 8px rgba(52,211,153,0.8)" }}
+                style={{ background: "var(--ok)" }}
               />
-              <span className="text-xs font-semibold tracking-wide" style={{ color: "#e2e8f0" }}>
+              <span className="text-xs font-semibold tracking-wide" style={{ color: "var(--ink-800)" }}>
                 Ghana · MTN · Telecel · AirtelTigo
               </span>
             </div>
@@ -245,8 +245,8 @@ export function LandingPage({ user }: { user: TokenPayload | null }) {
 
           <motion.h1
             {...fadeUp(0.1)}
-            className="text-6xl lg:text-7xl mb-8 font-bold text-white leading-[1.1] tracking-tight"
-            style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}
+            className="text-6xl lg:text-7xl mb-8 font-bold leading-[1.1] tracking-tight"
+            style={{ fontFamily: "var(--font-space-grotesk), sans-serif", color: "var(--ink-900)" }}
           >
             Data bundles,<br />
             <span className="pk-text-gradient">without the wahala.</span>
@@ -255,7 +255,7 @@ export function LandingPage({ user }: { user: TokenPayload | null }) {
           <motion.p
             {...fadeUp(0.22)}
             className="text-lg max-w-lg mb-12 leading-relaxed"
-            style={{ color: "#94a3b8" }}
+            style={{ color: "var(--ink-600)" }}
           >
             Buy MTN, Telecel and AirtelTigo bundles for any number in Ghana. No account. No app.
             Just your phone and a 60-second checkout.
@@ -265,7 +265,7 @@ export function LandingPage({ user }: { user: TokenPayload | null }) {
             <Button
               asChild
               className="rounded-lg px-8 py-4 h-auto text-sm font-semibold flex items-center gap-2 text-white transition-all"
-              style={{ background: "#2563eb", boxShadow: "0 0 20px rgba(37,99,235,0.4)" }}
+              style={{ background: "var(--brand-500)", boxShadow: "0 8px 20px rgba(37,99,235,0.25)" }}
             >
               <Link href="/networks">
                 Buy a bundle <Icon name="arrow-right" size={17} />
@@ -274,8 +274,8 @@ export function LandingPage({ user }: { user: TokenPayload | null }) {
             <Button
               asChild
               variant="ghost"
-              className="rounded-lg px-8 py-4 h-auto text-sm font-semibold text-white transition-all"
-              style={{ border: "1px solid rgba(71,85,105,1)", background: "rgba(15,23,42,0.5)" }}
+              className="rounded-lg px-8 py-4 h-auto text-sm font-semibold transition-all"
+              style={{ border: "1px solid var(--ink-300)", background: "var(--ink-100)", color: "var(--ink-800)" }}
             >
               <Link href="/order-status">Check order status</Link>
             </Button>
@@ -287,17 +287,17 @@ export function LandingPage({ user }: { user: TokenPayload | null }) {
               { icon: "shield", value: "Paystack",   label: "Secure checkout", href: null },
               ...(contactPhone ? [{ icon: "phone", value: contactPhone, label: "Call or WhatsApp", href: `tel:${contactPhone.replace(/\s/g, "")}` }] : []),
             ].map((s) => (
-              <div key={s.label} className="flex items-center gap-2" style={{ color: "#94a3b8" }}>
-                <span style={{ color: "#00e5ff" }}>
+              <div key={s.label} className="flex items-center gap-2" style={{ color: "var(--ink-600)" }}>
+                <span style={{ color: "var(--brand-500)" }}>
                   <Icon name={s.icon} size={20} />
                 </span>
                 <div className="text-xs text-left">
                   {s.href ? (
-                    <a href={s.href} className="font-bold text-white block no-underline" style={{ lineHeight: 1.3 }}>
+                    <a href={s.href} className="font-bold block no-underline" style={{ lineHeight: 1.3, color: "var(--ink-900)" }}>
                       {s.value}
                     </a>
                   ) : (
-                    <p className="font-bold text-white" style={{ lineHeight: 1.3 }}>{s.value}</p>
+                    <p className="font-bold" style={{ lineHeight: 1.3, color: "var(--ink-900)" }}>{s.value}</p>
                   )}
                   <p>{s.label}</p>
                 </div>
@@ -308,7 +308,7 @@ export function LandingPage({ user }: { user: TokenPayload | null }) {
       </section>
 
       {/* Quick Buy Widget */}
-      <section className="py-12 relative" style={{ background: "#0b1121" }}>
+      <section className="py-12 relative" style={{ background: "var(--ink-50)" }}>
         <div className="pk-grid absolute inset-0" style={{ opacity: 0.5 }} />
         <div className="max-w-[1200px] mx-auto px-10 relative z-10">
           <motion.div
@@ -323,7 +323,7 @@ export function LandingPage({ user }: { user: TokenPayload | null }) {
       </section>
 
       {/* How it works */}
-      <section className="py-24" style={{ background: "#0f172a", borderTop: "1px solid rgba(30,41,59,1)" }}>
+      <section className="py-24" style={{ background: "#f4eee1", borderTop: "1px solid var(--ink-200)" }}>
         <div className="max-w-[1200px] mx-auto px-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -332,12 +332,12 @@ export function LandingPage({ user }: { user: TokenPayload | null }) {
             transition={{ duration: 0.55, ease }}
             className="mb-16"
           >
-            <p className="font-bold text-xs uppercase tracking-widest mb-4" style={{ color: "#00e5ff" }}>
+            <p className="font-bold text-xs uppercase tracking-widest mb-4" style={{ color: "var(--brand-500)" }}>
               How it works
             </p>
             <h2
-              className="text-4xl lg:text-5xl text-white font-bold tracking-tight"
-              style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}
+              className="text-4xl lg:text-5xl font-bold tracking-tight"
+              style={{ fontFamily: "var(--font-space-grotesk), sans-serif", color: "var(--ink-900)" }}
             >
               Four steps. Sixty seconds.
             </h2>
@@ -360,18 +360,18 @@ export function LandingPage({ user }: { user: TokenPayload | null }) {
               >
                 <div
                   className="w-12 h-12 rounded-lg flex items-center justify-center font-bold"
-                  style={{ background: "#1e293b", color: "#00e5ff", boxShadow: "inset 0 1px 1px rgba(255,255,255,0.08)" }}
+                  style={{ background: "var(--brand-100)", color: "var(--brand-500)" }}
                 >
                   {s.n}
                 </div>
                 <div>
                   <p
-                    className="font-bold text-white mb-1"
-                    style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}
+                    className="font-bold mb-1"
+                    style={{ fontFamily: "var(--font-space-grotesk), sans-serif", color: "var(--ink-900)" }}
                   >
                     {s.t}
                   </p>
-                  <p className="text-sm" style={{ color: "#64748b" }}>{s.d}</p>
+                  <p className="text-sm" style={{ color: "var(--ink-500)" }}>{s.d}</p>
                 </div>
               </motion.div>
             ))}
@@ -380,20 +380,20 @@ export function LandingPage({ user }: { user: TokenPayload | null }) {
       </section>
 
       {/* Footer */}
-      <footer className="w-full py-12" style={{ background: "#0b1121", borderTop: "1px solid rgba(30,41,59,1)" }}>
+      <footer className="w-full py-12" style={{ background: "var(--ink-50)", borderTop: "1px solid var(--ink-200)" }}>
         <div className="max-w-[1200px] mx-auto px-10 flex flex-col sm:flex-row justify-between items-center gap-8">
-          <p className="text-xs" style={{ color: "#475569" }}>
+          <p className="text-xs" style={{ color: "var(--ink-500)" }}>
             © 2026 Prince K Ventures. All rights reserved. Accra, Ghana.
           </p>
-          <nav className="flex flex-wrap justify-center gap-6 text-xs" style={{ color: "#94a3b8" }}>
-            <Link href="/terms" className="no-underline transition-colors hover:text-white">Terms & Conditions</Link>
-            <Link href="/privacy" className="no-underline transition-colors hover:text-white">Privacy Policy</Link>
-            <Link href="/refund-policy" className="no-underline transition-colors hover:text-white">Refund Policy</Link>
-            <Link href="/faq" className="no-underline transition-colors hover:text-white">FAQs</Link>
+          <nav className="flex flex-wrap justify-center gap-6 text-xs" style={{ color: "var(--ink-600)" }}>
+            <Link href="/terms" className="no-underline transition-colors hover:text-[var(--brand-500)]">Terms & Conditions</Link>
+            <Link href="/privacy" className="no-underline transition-colors hover:text-[var(--brand-500)]">Privacy Policy</Link>
+            <Link href="/refund-policy" className="no-underline transition-colors hover:text-[var(--brand-500)]">Refund Policy</Link>
+            <Link href="/faq" className="no-underline transition-colors hover:text-[var(--brand-500)]">FAQs</Link>
             <a
               href="mailto:Princelinkbundles@gmail.com"
-              className="font-bold no-underline transition-colors hover:text-white"
-              style={{ color: "#cbd5e1" }}
+              className="font-bold no-underline transition-colors hover:text-[var(--brand-500)]"
+              style={{ color: "var(--ink-800)" }}
             >
               Princelinkbundles@gmail.com
             </a>

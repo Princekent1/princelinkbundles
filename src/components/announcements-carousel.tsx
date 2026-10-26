@@ -58,14 +58,14 @@ export function AnnouncementsCarousel({ queryKey, queryFn }: AnnouncementsCarous
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center"
-      style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(2px)" }}
+      style={{ background: "rgba(38,33,27,0.45)", backdropFilter: "blur(2px)" }}
       onClick={(e) => {
         if (e.target === e.currentTarget) setOpen(false);
       }}
     >
       <div
         className="relative w-full max-w-[420px] mx-4 rounded-2xl shadow-2xl flex flex-col"
-        style={{ background: "var(--ink-50)", border: "1px solid var(--ink-200)" }}
+        style={{ background: "var(--ink-100)", border: "1px solid var(--ink-200)" }}
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
       >

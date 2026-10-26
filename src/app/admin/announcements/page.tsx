@@ -216,7 +216,7 @@ export default function AnnouncementsPage() {
             {tab.label}{" "}
             <span
               className={
-                view === tab.id ? "text-white/60" : "text-[var(--ink-400)]"
+                view === tab.id ? "text-[var(--ink-600)]" : "text-[var(--ink-400)]"
               }
             >
               {tab.count}

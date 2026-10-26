@@ -70,7 +70,7 @@ export function VendorShell({
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 h-screen z-40 w-[240px] bg-[var(--ink-50)]
+          fixed top-0 left-0 h-screen z-40 w-[240px] bg-[var(--sidebar)]
           border-r border-[var(--ink-200)] flex flex-col shrink-0
           transition-transform duration-200 ease-in-out
           md:sticky md:translate-x-0
@@ -120,7 +120,7 @@ export function VendorShell({
 
         <div style={{
           margin: "16px 0", padding: 14,
-          background: "linear-gradient(135deg, var(--brand-500) 0%, var(--ink-200) 100%)",
+          background: "linear-gradient(135deg, var(--brand-500) 0%, var(--brand-600) 100%)",
           borderRadius: 14, color: "white",
         }}>
           <div style={{ fontSize: 11, fontWeight: 600, opacity: 0.75, textTransform: "uppercase", letterSpacing: 0.5 }}>Wallet balance</div>
