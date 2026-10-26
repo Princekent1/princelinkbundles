@@ -226,6 +226,31 @@ export const getBundles = {
 export type PaymentSettings = {
   passPaystackFeesToCustomers: boolean;
   paystackFeeRateBps: number;
+  paymentMode: "paystack" | "floatvault";
+};
+
+export type PaymentQuote = {
+  provider: "paystack" | "floatvault";
+  baseAmountGhs: number;
+  processingFeeGhs: number;
+  totalPayableGhs: number;
+  feePayer: "customer" | "app_owner";
+  feeRateBps: number;
+};
+
+export const getPaymentQuote = {
+  key: (target: { bundleId?: string; amountGhs?: number }) => ["payment", "quote", target],
+  fn: async (target: { bundleId?: string; amountGhs?: number }): Promise<PaymentQuote> => {
+    try {
+      const params = new URLSearchParams();
+      if (target.bundleId) params.set("bundleId", target.bundleId);
+      if (target.amountGhs) params.set("amountGhs", String(target.amountGhs));
+      const res = await apiClient.get(`/api/v1/payment-quote?${params.toString()}`);
+      return res.data;
+    } catch (error) {
+      return throwError(error as ApiError);
+    }
+  },
 };
 
 export const getPaymentSettings = {
@@ -244,12 +269,15 @@ export type GuestOrderInput = {
   bundleId: string;
   customerPhone: string;
   customerEmail?: string;
+  expectedTotalGhs?: number;
 };
 
 export const createGuestOrder = {
   fn: async (data: GuestOrderInput): Promise<{
     reference: string;
-    paystackUrl: string;
+    paystackUrl?: string;
+    checkoutUrl?: string;
+    provider?: "floatvault";
     amountGhs: number;
     processingFeeGhs: number;
     totalPaidGhs: number;
@@ -658,6 +686,7 @@ export type OrderLookupResult = {
   processingFeeGhs: number;
   totalPaidGhs: number;
   paymentMethod: string;
+  checkoutUrl?: string | null;
   paidAt: string | null;
   createdAt: string;
 };
@@ -710,15 +739,17 @@ export const getVendorWallet = {
 };
 
 export const initWalletTopup = {
-  fn: async (amountGhs: number): Promise<{
-    paystackUrl: string;
+  fn: async (amountGhs: number, floatvault?: { expectedTotalGhs: number }): Promise<{
+    paystackUrl?: string;
+    checkoutUrl?: string;
+    provider?: "floatvault";
     reference: string;
     amountGhs: number;
     processingFeeGhs: number;
     totalPaidGhs: number;
   }> => {
     try {
-      const res = await apiClient.post("/api/v1/vendor/wallet/topup", { amountGhs });
+      const res = await apiClient.post("/api/v1/vendor/wallet/topup", { amountGhs, ...floatvault });
       return res.data;
     } catch (error) {
       return throwError(error as ApiError);
@@ -749,7 +780,7 @@ export const getPendingTopups = {
 
 export type VerifyTopupResult =
   | { credited: true; amountGhs: number; processingFeeGhs: number; totalPaidGhs: number; newBalance: number }
-  | { credited: false; paystackStatus: string }
+  | { credited: false; paystackStatus: string; checkoutUrl?: string | null }
   | { alreadyProcessed: true; status: string };
 
 export const verifyTopup = {
@@ -785,7 +816,7 @@ export const getSignupFeeStatus = {
 };
 
 export const initSignupFee = {
-  fn: async (): Promise<{ paystackUrl: string; reference: string; amountGhs: number }> => {
+  fn: async (): Promise<{ paystackUrl?: string; checkoutUrl?: string; provider?: "floatvault"; reference: string; amountGhs: number }> => {
     try {
       const res = await apiClient.post("/api/v1/vendor/signup-fee");
       return res.data;
@@ -797,7 +828,7 @@ export const initSignupFee = {
 
 export type VerifySignupFeeResult =
   | { paid: true; approved: boolean }
-  | { paid: false; paystackStatus: string }
+  | { paid: false; paystackStatus: string; checkoutUrl?: string | null }
   | { alreadyProcessed: true; status: string };
 
 export const verifySignupFee = {
@@ -895,6 +926,8 @@ export type FulfillmentSettings = {
   autoSendVendors: boolean;
   autoSendGuests: boolean;
   autoApproveVendors: boolean;
+  paymentMode: "paystack" | "floatvault";
+  floatvaultFeePolicy: { feePayer: "customer" | "app_owner"; probeFeeGhs: number } | null;
   passPaystackFeesToCustomers: boolean;
   contactPhone: string;
   whatsappCommunityUrl: string;
@@ -918,7 +951,7 @@ export const getFulfillmentSettings = {
 };
 
 export const updateFulfillmentSettings = {
-  fn: async (data: Partial<Pick<FulfillmentSettings, "autoSendVendors" | "autoSendGuests" | "autoApproveVendors" | "passPaystackFeesToCustomers" | "contactPhone" | "whatsappCommunityUrl" | "disabledNetworks" | "requireVendorSignupFee" | "vendorSignupFeeGhs">>): Promise<Omit<FulfillmentSettings, "jaybartBalance" | "paystackFeeRateBps">> => {
+  fn: async (data: Partial<Pick<FulfillmentSettings, "autoSendVendors" | "autoSendGuests" | "autoApproveVendors" | "paymentMode" | "passPaystackFeesToCustomers" | "contactPhone" | "whatsappCommunityUrl" | "disabledNetworks" | "requireVendorSignupFee" | "vendorSignupFeeGhs">>): Promise<Omit<FulfillmentSettings, "jaybartBalance" | "paystackFeeRateBps" | "floatvaultFeePolicy">> => {
     try {
       const res = await apiClient.patch("/api/v1/admin/settings", data);
       return res.data;

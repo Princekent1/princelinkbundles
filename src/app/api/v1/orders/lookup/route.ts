@@ -1,6 +1,7 @@
 import connectMongo from "@/lib/mongo";
 import { OrderModel } from "@/lib/models/order";
 import { BundleModel } from "@/lib/models/bundle";
+import { syncFloatVaultOrder } from "@/lib/floatvault-sync";
 
 export const GET = async (req: Request) => {
   const { searchParams } = new URL(req.url);
@@ -12,6 +13,8 @@ export const GET = async (req: Request) => {
 
   try {
     await connectMongo();
+
+    await syncFloatVaultOrder(ref);
 
     const order = await OrderModel.findOne({ reference: ref }).lean();
     if (!order) {
@@ -31,6 +34,7 @@ export const GET = async (req: Request) => {
       processingFeeGhs: order.processingFeeGhs ?? 0,
       totalPaidGhs: order.totalPaidGhs ?? order.amountGhs,
       paymentMethod: order.paymentMethod,
+      checkoutUrl: order.status === "pending_payment" ? (order.floatvaultCheckoutUrl ?? null) : null,
       paidAt: order.paidAt ?? null,
       createdAt: order.createdAt,
     });

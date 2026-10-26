@@ -9,6 +9,7 @@ export const GET = async () => {
 
     return Response.json({
       passPaystackFeesToCustomers: settings.passPaystackFeesToCustomers,
+      paymentMode: settings.paymentMode,
       paystackFeeRateBps: PAYSTACK_FEE_RATE_BPS,
     });
   } catch {

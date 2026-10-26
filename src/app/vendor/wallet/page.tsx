@@ -15,7 +15,7 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import { ghsp } from "@/lib/data";
-import { getPaymentSettings, getVendorWallet, initWalletTopup } from "@/api";
+import { getPaymentQuote, getPaymentSettings, getVendorWallet, initWalletTopup, verifyTopup } from "@/api";
 import { calculatePaystackFee } from "@/lib/paystack-fees";
 import toast from "react-hot-toast";
 
@@ -41,6 +41,7 @@ function WalletPageContent() {
   const [amount, setAmount] = useState("");
   const [page, setPage] = useState(1);
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [fvTopup, setFvTopup] = useState<{ reference: string } | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: getVendorWallet.key(page),
@@ -54,7 +55,12 @@ function WalletPageContent() {
 
   useEffect(() => {
     const topup = searchParams.get("topup");
-    if (topup === "success") {
+    const fvRef = searchParams.get("ref");
+    if (topup === "success" && fvRef) {
+      // back from FloatVault's checkout: confirm the payment before crediting anything on screen
+      setFvTopup({ reference: fvRef });
+      router.replace("/vendor/wallet");
+    } else if (topup === "success") {
       toast.success("Wallet topped up successfully");
       queryClient.invalidateQueries({ queryKey: ["vendor", "wallet"] });
       router.replace("/vendor/wallet");
@@ -64,16 +70,29 @@ function WalletPageContent() {
     }
   }, [searchParams, queryClient, router]);
 
+  const isFloatVault = paymentSettings?.paymentMode === "floatvault";
+  const topupPesewas = Math.round(parseFloat(amount) * 100);
+  const amountValid = !isNaN(parseFloat(amount)) && parseFloat(amount) >= 1 && parseFloat(amount) <= 5000;
+
+  const { data: floatvaultQuote } = useQuery({
+    queryKey: getPaymentQuote.key({ amountGhs: topupPesewas }),
+    queryFn: () => getPaymentQuote.fn({ amountGhs: topupPesewas }),
+    enabled: isFloatVault && amountValid,
+    retry: false,
+  });
+
   const { mutate: startTopup, isPending } = useMutation({
-    mutationFn: () => {
-      const pesewas = Math.round(parseFloat(amount) * 100);
-      return initWalletTopup.fn(pesewas);
-    },
+    mutationFn: () =>
+      isFloatVault ? initWalletTopup.fn(topupPesewas, { expectedTotalGhs: floatvaultQuote!.totalPayableGhs }) : initWalletTopup.fn(topupPesewas),
     onSuccess: (result) => {
-      setIsRedirecting(true);
-      window.location.href = result.paystackUrl;
+      const url = result.checkoutUrl ?? result.paystackUrl;
+      if (url) {
+        setIsRedirecting(true);
+        window.location.href = url;
+      }
     },
     onError: (err: { message: string }) => {
+      if (isFloatVault) queryClient.invalidateQueries({ queryKey: getPaymentQuote.key({ amountGhs: topupPesewas }) });
       toast.error(err.message ?? "Failed to initialize top-up");
     },
   });
@@ -82,13 +101,14 @@ function WalletPageContent() {
   const validAmount   = !isNaN(amountNum) && amountNum >= 1 && amountNum <= 5000;
   const walletBalance = data?.walletBalance ?? 0;
   const topupBaseGhs = validAmount ? Math.round(amountNum * 100) : 0;
-  const fee = validAmount
-    ? calculatePaystackFee(
-        topupBaseGhs,
-        paymentSettings?.passPaystackFeesToCustomers ?? false,
-        paymentSettings?.paystackFeeRateBps
-      )
-    : null;
+  const fee = isFloatVault
+    ? floatvaultQuote && validAmount
+      ? { baseAmountGhs: floatvaultQuote.baseAmountGhs, processingFeeGhs: floatvaultQuote.processingFeeGhs, totalPayableGhs: floatvaultQuote.totalPayableGhs }
+      : null
+    : validAmount
+      ? calculatePaystackFee(topupBaseGhs, paymentSettings?.passPaystackFeesToCustomers ?? false, paymentSettings?.paystackFeeRateBps)
+      : null;
+  const feeLabel = isFloatVault ? "processing fee" : "Paystack fee";
 
   return (
     <VendorShell walletBalance={walletBalance}>
@@ -126,6 +146,16 @@ function WalletPageContent() {
           </div>
         </div>
 
+        {fvTopup && (
+          <FloatVaultTopupStatus
+            topup={fvTopup}
+            onDone={() => {
+              setFvTopup(null);
+              queryClient.invalidateQueries({ queryKey: ["vendor", "wallet"] });
+            }}
+          />
+        )}
+
         {showTopUp && (
           <Card className="p-4 md:p-5 gap-0 rounded-2xl border-[var(--ink-200)] mb-6">
             <div className="font-bold text-[15px] mb-3.5">Add funds</div>
@@ -157,19 +187,21 @@ function WalletPageContent() {
               </div>
               <Button
                 onClick={() => startTopup()}
-                disabled={isPending || isRedirecting || !validAmount}
+                disabled={isPending || isRedirecting || !validAmount || (isFloatVault && !floatvaultQuote)}
                 className="rounded-xl px-[22px] py-3 h-auto text-sm font-semibold whitespace-nowrap"
               >
-                {isPending || isRedirecting ? "Redirecting…" : `Pay ${fee ? ghsp(fee.totalPayableGhs) : "with Paystack"}`}
+                {isPending || isRedirecting ? "Redirecting…" : `Pay ${fee ? ghsp(fee.totalPayableGhs) : isFloatVault ? "" : "with Paystack"}`}
               </Button>
             </div>
             {fee && fee.processingFeeGhs > 0 && (
               <div className="mt-3 rounded-xl border border-[var(--ink-200)] bg-[var(--ink-50)] px-3.5 py-3 text-xs text-[var(--ink-600)]">
-                Wallet credit <strong>{ghsp(fee.baseAmountGhs)}</strong> + Paystack fee <strong>{ghsp(fee.processingFeeGhs)}</strong> = <strong>{ghsp(fee.totalPayableGhs)}</strong>
+                Wallet credit <strong>{ghsp(fee.baseAmountGhs)}</strong> + {feeLabel} <strong>{ghsp(fee.processingFeeGhs)}</strong> = <strong>{ghsp(fee.totalPayableGhs)}</strong>
               </div>
             )}
             <p className="mt-2.5 text-xs text-[var(--ink-500)]">
-              You&apos;ll be redirected to Paystack to complete the Mobile Money payment. Maximum GHS 5,000 per top-up.
+              {isFloatVault
+                ? "You'll choose your network and approve the payment on FloatVault's secure page. Maximum GHS 5,000 per top-up."
+                : "You'll be redirected to Paystack to complete the Mobile Money payment. Maximum GHS 5,000 per top-up."}
             </p>
           </Card>
         )}
@@ -267,5 +299,42 @@ export default function VendorWalletPage() {
     <Suspense>
       <WalletPageContent />
     </Suspense>
+  );
+}
+
+function FloatVaultTopupStatus({ topup, onDone }: { topup: { reference: string }; onDone: () => void }) {
+  const { data } = useQuery({
+    queryKey: ["vendor", "wallet", "floatvault-topup", topup.reference],
+    queryFn: () => verifyTopup.fn(topup.reference),
+    refetchInterval: 3000,
+  });
+
+  useEffect(() => {
+    if (!data) return;
+    if ("credited" in data && data.credited) {
+      toast.success("Wallet topped up successfully");
+      onDone();
+    } else if ("alreadyProcessed" in data) {
+      if (data.status === "success") toast.success("Wallet topped up successfully");
+      else toast.error("The payment was not completed. No money was taken.");
+      onDone();
+    }
+  }, [data, onDone]);
+
+  const checkoutUrl = data && "credited" in data && !data.credited ? data.checkoutUrl : null;
+
+  return (
+    <Card className="p-4 md:p-5 gap-0 rounded-2xl border-[var(--ink-200)] mb-6">
+      <div className="font-bold text-[15px] mb-1">Confirming your payment</div>
+      <p className="text-xs text-[var(--ink-500)] mb-3">
+        We&apos;re waiting for the payment to be confirmed. If you haven&apos;t finished paying, continue below. This updates by itself.
+      </p>
+      {checkoutUrl && (
+        <Button onClick={() => window.location.assign(checkoutUrl)} className="rounded-xl px-[22px] py-3 h-auto text-sm font-semibold">
+          Continue to payment
+        </Button>
+      )}
+      <div className="mt-2 text-[11px] text-[var(--ink-400)]">Ref {topup.reference}</div>
+    </Card>
   );
 }

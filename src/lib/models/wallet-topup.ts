@@ -9,7 +9,11 @@ export type WalletTopup = {
   processingFeeRateBps?: number;
   paystackAmountGhs?: number | null;
   status: "pending" | "success" | "failed";
+  channel?: "paystack" | "floatvault";
   paystackReference?: string | null;
+  floatvaultReference?: string | null;
+  floatvaultCheckoutUrl?: string | null;
+  floatvaultAmountGhs?: number | null;
   paidAt?: Date | null;
   createdAt?: Date;
   updatedAt?: Date;
@@ -25,7 +29,11 @@ const schema = new mongoose.Schema<WalletTopup>(
     processingFeeRateBps: { type: Number, default: 0 },
     paystackAmountGhs: { type: Number, default: null },
     status: { type: String, enum: ["pending", "success", "failed"], default: "pending" },
+    channel: { type: String, enum: ["paystack", "floatvault"], default: "paystack" },
     paystackReference: { type: String, default: null },
+    floatvaultReference: { type: String, default: null },
+    floatvaultCheckoutUrl: { type: String, default: null },
+    floatvaultAmountGhs: { type: Number, default: null },
     paidAt: { type: Date, default: null },
   },
   { timestamps: true }
@@ -33,6 +41,7 @@ const schema = new mongoose.Schema<WalletTopup>(
 
 schema.index({ vendorId: 1 });
 schema.index({ paystackReference: 1 });
+schema.index({ floatvaultReference: 1 });
 
 export const WalletTopupModel =
   mongoose.models.WalletTopup || mongoose.model<WalletTopup>("WalletTopup", schema);

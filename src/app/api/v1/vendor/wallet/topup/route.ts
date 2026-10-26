@@ -5,6 +5,8 @@ import { createErrorResponse } from "@/lib/errors";
 import { initializeTransaction, generateTopupReference } from "@/lib/paystack";
 import { getSettings } from "@/lib/models/settings";
 import { calculatePaystackFee } from "@/lib/paystack-fees";
+import { quotePayment } from "@/lib/payments/quote";
+import { startHostedCheckout } from "@/lib/floatvault-charge";
 
 const MAX_TOPUP_GHS = 500_000; // GHS 5,000 in pesewas
 
@@ -15,7 +17,7 @@ export const POST = async (req: Request) => {
 
   try {
     const body = await req.json().catch(() => ({}));
-    const { amountGhs } = body;
+    const { amountGhs, expectedTotalGhs } = body;
 
     if (!amountGhs || typeof amountGhs !== "number" || !Number.isInteger(amountGhs) || amountGhs < 100) {
       return Response.json({ message: "amountGhs must be a positive integer in pesewas (minimum 100)" }, { status: 400 });
@@ -26,7 +28,30 @@ export const POST = async (req: Request) => {
 
     await connectMongo();
     const settings = await getSettings();
-    const fee = calculatePaystackFee(amountGhs, settings.passPaystackFeesToCustomers);
+    const useFloatVault = settings.paymentMode === "floatvault";
+
+    let fee: { baseAmountGhs: number; processingFeeGhs: number; totalPayableGhs: number; processingFeeRateBps: number };
+    if (useFloatVault) {
+      try {
+        const quote = await quotePayment(amountGhs, settings);
+        fee = {
+          baseAmountGhs: quote.baseAmountGhs,
+          processingFeeGhs: quote.processingFeeGhs,
+          totalPayableGhs: quote.totalPayableGhs,
+          processingFeeRateBps: quote.feeRateBps,
+        };
+      } catch {
+        return Response.json({ message: "We couldn't price this top-up right now. Please try again shortly." }, { status: 502 });
+      }
+      if (typeof expectedTotalGhs === "number" && expectedTotalGhs !== fee.totalPayableGhs) {
+        return Response.json(
+          { message: "The price changed. Please review the new total and try again.", totalPayableGhs: fee.totalPayableGhs },
+          { status: 409 },
+        );
+      }
+    } else {
+      fee = calculatePaystackFee(amountGhs, settings.passPaystackFeesToCustomers);
+    }
 
     let reference = generateTopupReference();
     for (let i = 0; i < 4; i++) {
@@ -41,10 +66,35 @@ export const POST = async (req: Request) => {
       processingFeeGhs: fee.processingFeeGhs,
       totalPaidGhs: fee.totalPayableGhs,
       processingFeeRateBps: fee.processingFeeRateBps,
+      channel: useFloatVault ? "floatvault" : "paystack",
       status: "pending",
     });
 
     const origin = new URL(req.url).origin;
+
+    if (useFloatVault) {
+      try {
+        const payment = await startHostedCheckout({
+          reference: topup.reference,
+          kind: "topup",
+          amountGhs,
+          callbackUrl: `${origin}/vendor/wallet?topup=success&ref=${topup.reference}`,
+        });
+        await WalletTopupModel.updateOne({ _id: topup._id }, { floatvaultReference: payment.reference, floatvaultCheckoutUrl: payment.checkoutUrl });
+
+        return Response.json({
+          provider: "floatvault",
+          reference: topup.reference,
+          checkoutUrl: payment.checkoutUrl,
+          amountGhs: topup.amountGhs,
+          processingFeeGhs: topup.processingFeeGhs ?? 0,
+          totalPaidGhs: topup.totalPaidGhs ?? topup.amountGhs,
+        }, { status: 201 });
+      } catch {
+        await WalletTopupModel.updateOne({ _id: topup._id, status: "pending" }, { status: "failed" });
+        return Response.json({ message: "We couldn't start the payment. Please try again." }, { status: 502 });
+      }
+    }
 
     const paystack = await initializeTransaction({
       email: user.email,

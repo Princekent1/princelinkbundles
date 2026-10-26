@@ -165,18 +165,53 @@ export default function AdminSettingsPage() {
         <Card className="p-4 md:p-6 gap-0 rounded-2xl border-[var(--ink-200)] mb-5">
           <div className="font-bold text-[15px] mb-1">Payments</div>
           <p className="text-[13px] text-[var(--ink-500)] mb-5 mt-1">
-            Control how Paystack processing fees are handled for guest checkout and vendor wallet top-ups.
+            Choose the payment provider and control how processing fees are handled for guest checkout, vendor wallet top-ups and the vendor signup fee.
           </p>
+          <div className="flex flex-col gap-2 mb-5">
+            <div className="font-semibold text-sm">Payment provider</div>
+            <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label="Payment provider">
+              {([
+                { value: "paystack", label: "Paystack", hint: "Redirects to Paystack's checkout" },
+                { value: "floatvault", label: "FloatVault", hint: "Redirects to FloatVault's hosted checkout" },
+              ] as const).map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  role="radio"
+                  aria-checked={(fulfillment?.paymentMode ?? "paystack") === opt.value}
+                  disabled={fulfillmentLoading}
+                  onClick={() => updateSettings({ paymentMode: opt.value })}
+                  className={`rounded-xl border px-3 py-2.5 text-left disabled:opacity-50 ${
+                    (fulfillment?.paymentMode ?? "paystack") === opt.value ? "border-[var(--brand-500)] bg-[var(--brand-50)]" : "border-[var(--ink-200)] bg-white"
+                  }`}
+                >
+                  <div className="text-sm font-semibold">{opt.label}</div>
+                  <div className="text-xs text-[var(--ink-500)] mt-0.5">{opt.hint}</div>
+                </button>
+              ))}
+            </div>
+            {fulfillment?.paymentMode === "floatvault" && (
+              <div className="text-xs text-[var(--ink-500)]">
+                {fulfillment.floatvaultFeePolicy
+                  ? fulfillment.floatvaultFeePolicy.feePayer === "customer"
+                    ? "FloatVault adds its fee on top of the amount. Keep \"Pass fees to customers\" off."
+                    : "You pay FloatVault's fee out of what you receive. The customer pays the bundle price."
+                  : "FloatVault can't be reached with the configured API URL and key."}
+              </div>
+            )}
+          </div>
           <div className="flex items-center justify-between gap-4">
             <div>
               <div className="font-semibold text-sm">Pass Paystack fees to customers</div>
               <div className="text-xs text-[var(--ink-500)] mt-0.5">
-                Adds a {((fulfillment?.paystackFeeRateBps ?? 195) / 100).toFixed(2)}% Paystack fee to Paystack payments
+                {fulfillment?.paymentMode === "floatvault"
+                  ? "Not used with FloatVault: its own fee policy applies"
+                  : `Adds a ${((fulfillment?.paystackFeeRateBps ?? 195) / 100).toFixed(2)}% Paystack fee to Paystack payments`}
               </div>
             </div>
             <ToggleSwitch
               checked={fulfillment?.passPaystackFeesToCustomers ?? false}
-              disabled={fulfillmentLoading}
+              disabled={fulfillmentLoading || fulfillment?.paymentMode === "floatvault"}
               onChange={(v) => updateSettings({ passPaystackFeesToCustomers: v })}
             />
           </div>

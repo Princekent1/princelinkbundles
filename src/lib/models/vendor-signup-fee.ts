@@ -5,7 +5,11 @@ export type VendorSignupFee = {
   reference: string;
   amountGhs: number; // pesewas
   status: "pending" | "success" | "failed";
+  channel?: "paystack" | "floatvault";
   paystackReference?: string | null;
+  floatvaultReference?: string | null;
+  floatvaultCheckoutUrl?: string | null;
+  floatvaultAmountGhs?: number | null;
   paystackAmountGhs?: number | null;
   paidAt?: Date | null;
   createdAt?: Date;
@@ -18,7 +22,11 @@ const schema = new mongoose.Schema<VendorSignupFee>(
     reference: { type: String, required: true, unique: true },
     amountGhs: { type: Number, required: true }, // pesewas
     status: { type: String, enum: ["pending", "success", "failed"], default: "pending" },
+    channel: { type: String, enum: ["paystack", "floatvault"], default: "paystack" },
     paystackReference: { type: String, default: null },
+    floatvaultReference: { type: String, default: null },
+    floatvaultCheckoutUrl: { type: String, default: null },
+    floatvaultAmountGhs: { type: Number, default: null },
     paystackAmountGhs: { type: Number, default: null },
     paidAt: { type: Date, default: null },
   },
