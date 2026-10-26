@@ -32,7 +32,7 @@ function SignupFeeContent() {
   }, [meLoading, user, router]);
 
   useEffect(() => {
-    if (!isLoading && data && !data.required) {
+    if (!isLoading && data && (!data.required || data.status === "success")) {
       router.replace("/pending");
     }
   }, [isLoading, data, router]);
