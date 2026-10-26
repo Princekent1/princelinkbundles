@@ -26,6 +26,9 @@ function SuccessContent() {
       query.state.data?.status === "pending_payment" ? 3000 : false,
   });
 
+  const awaitingPayment = data?.paymentMethod === "floatvault" && data.status === "pending_payment";
+  const paymentNotCompleted = data?.paymentMethod === "floatvault" && data.status === "cancelled";
+
   function copyRef() {
     if (!ref) return;
     navigator.clipboard
@@ -40,7 +43,7 @@ function SuccessContent() {
         ["Network", <NetChip key="network" network={data.networkSnapshot.toUpperCase()} />],
         ["Phone", data.customerPhone],
         ["Bundle amount", <span key="base" className="bh-mono">{ghsp(data.amountGhs)}</span>],
-        data.processingFeeGhs > 0 ? ["Paystack fee", <span key="fee" className="bh-mono">{ghsp(data.processingFeeGhs)}</span>] : null,
+        data.processingFeeGhs > 0 ? [data.paymentMethod === "floatvault" ? "Processing fee" : "Paystack fee", <span key="fee" className="bh-mono">{ghsp(data.processingFeeGhs)}</span>] : null,
         ["Amount paid", <span key="amount" className="bh-mono">{ghsp(data.totalPaidGhs)}</span>],
         ["Status", <StatusBadge key="status" status={data.status.toUpperCase()} />],
       ] as ([string, React.ReactNode] | null)[]).filter((row): row is [string, React.ReactNode] => row !== null)
@@ -64,10 +67,26 @@ function SuccessContent() {
             <Icon name="check" size={26} />
           </div>
           <h2 className="bh-display" style={{ fontSize: 28, margin: "16px 0 6px", letterSpacing: "-0.02em" }}>
-            Order placed.
+            {awaitingPayment ? "Confirming your payment." : paymentNotCompleted ? "Payment not completed." : "Order placed."}
           </h2>
-          <p style={{ margin: 0, opacity: 0.85, fontSize: 14 }}>Your data will be processed and delivered shortly.</p>
+          <p style={{ margin: 0, opacity: 0.85, fontSize: 14 }}>
+            {awaitingPayment
+              ? "We're waiting for your payment to be confirmed. If you haven't finished paying, continue below. This page updates by itself."
+              : paymentNotCompleted
+                ? "No money was taken. You can go back and try again."
+                : "Your data will be processed and delivered shortly."}
+          </p>
         </div>
+
+        {awaitingPayment && data?.checkoutUrl && (
+          <Button
+            className="rounded-full h-12 text-base w-full"
+            style={{ marginTop: 20 }}
+            onClick={() => window.location.assign(data.checkoutUrl!)}
+          >
+            Continue to payment
+          </Button>
+        )}
 
         <div className="bh-card" style={{ marginTop: 20, padding: 20, textAlign: "center" }}>
           <div style={{ fontSize: 12, fontWeight: 600, textTransform: "uppercase", color: "var(--ink-500)", letterSpacing: 0.5 }}>

@@ -4,6 +4,7 @@ export type Settings = {
   autoSendVendors: boolean;
   autoSendGuests: boolean;
   autoApproveVendors: boolean;
+  paymentMode: "paystack" | "floatvault";
   passPaystackFeesToCustomers: boolean;
   contactPhone: string;
   whatsappCommunityUrl: string;
@@ -16,6 +17,7 @@ const schema = new mongoose.Schema<Settings>({
   autoSendVendors: { type: Boolean, default: false },
   autoSendGuests: { type: Boolean, default: false },
   autoApproveVendors: { type: Boolean, default: false },
+  paymentMode: { type: String, enum: ["paystack", "floatvault"], default: "paystack" },
   passPaystackFeesToCustomers: { type: Boolean, default: false },
   contactPhone: { type: String, default: "" },
   whatsappCommunityUrl: { type: String, default: "" },
@@ -33,6 +35,7 @@ export async function getSettings(): Promise<Settings> {
     autoSendVendors: doc?.autoSendVendors ?? false,
     autoSendGuests: doc?.autoSendGuests ?? false,
     autoApproveVendors: doc?.autoApproveVendors ?? false,
+    paymentMode: doc?.paymentMode ?? "paystack",
     passPaystackFeesToCustomers: doc?.passPaystackFeesToCustomers ?? false,
     contactPhone: doc?.contactPhone ?? "",
     whatsappCommunityUrl: doc?.whatsappCommunityUrl ?? "",

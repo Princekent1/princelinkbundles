@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
@@ -37,8 +37,13 @@ function SignupFeeContent() {
     }
   }, [isLoading, data, router]);
 
+  // back from FloatVault's checkout: keep confirming the payment until it settles
+  const [returnedRef, setReturnedRef] = useState<string | null>(null);
+
   useEffect(() => {
     if (searchParams.get("fee") === "success") {
+      const ref = searchParams.get("ref");
+      if (ref) setReturnedRef(ref);
       refetch();
       router.replace("/vendor/signup-fee");
     }
@@ -47,14 +52,13 @@ function SignupFeeContent() {
   const { mutate: startPayment, isPending: starting } = useMutation({
     mutationFn: initSignupFee.fn,
     onSuccess: (result) => {
-      window.location.href = result.paystackUrl;
+      const url = result.checkoutUrl ?? result.paystackUrl;
+      if (url) window.location.href = url;
     },
     onError: (err: { message: string }) => toast.error(err.message ?? "Failed to start payment"),
   });
 
-  const { mutate: verify, isPending: verifying } = useMutation({
-    mutationFn: (reference: string) => verifySignupFee.fn(reference),
-    onSuccess: async (result) => {
+  const handleVerified = async (result: Awaited<ReturnType<typeof verifySignupFee.fn>>, quiet = false) => {
       if ("paid" in result && result.paid) {
         if (result.approved) {
           toast.success("Payment confirmed — your account is approved! Please log in again to continue.");
@@ -67,12 +71,35 @@ function SignupFeeContent() {
       } else if ("alreadyProcessed" in result) {
         toast(result.status === "success" ? "Payment already confirmed" : "That payment did not succeed");
         refetch();
-      } else if ("paid" in result && !result.paid) {
-        toast.error(`Payment not confirmed by Paystack (status: ${result.paystackStatus})`);
+      } else if ("paid" in result && !result.paid && !quiet) {
+        toast.error(`Payment not confirmed yet (status: ${result.paystackStatus})`);
       }
-    },
+  };
+
+  const { mutate: verify, isPending: verifying } = useMutation({
+    mutationFn: (reference: string) => verifySignupFee.fn(reference),
+    onSuccess: (result) => handleVerified(result),
     onError: (err: { message: string }) => toast.error(err.message ?? "Verification failed"),
   });
+
+  const { data: watched } = useQuery({
+    queryKey: ["vendor", "signup-fee", "watch", returnedRef],
+    queryFn: () => verifySignupFee.fn(returnedRef!),
+    enabled: !!returnedRef,
+    refetchInterval: (query) => {
+      const result = query.state.data;
+      return result && ("alreadyProcessed" in result || ("paid" in result && result.paid)) ? false : 3000;
+    },
+  });
+
+  useEffect(() => {
+    if (!watched || !returnedRef) return;
+    if ("alreadyProcessed" in watched || ("paid" in watched && watched.paid)) {
+      setReturnedRef(null);
+      handleVerified(watched, true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [watched]);
 
   useEffect(() => {
     queryClient.invalidateQueries({ queryKey: getMe.key });
@@ -97,7 +124,7 @@ function SignupFeeContent() {
           <>
             <p className="text-[var(--ink-500)] text-[15px] leading-relaxed mb-8">
               {data?.status === "pending"
-                ? "We're confirming your payment with Paystack. This is usually instant — you can check again below."
+                ? "We're confirming your payment. This is usually instant — you can check again below."
                 : "Pay the vendor signup fee to complete your application."}
             </p>
 

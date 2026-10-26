@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 export type Order = {
   reference: string;
   placedBy?: mongoose.Types.ObjectId | null;
-  paymentMethod: "paystack" | "wallet";
+  paymentMethod: "paystack" | "wallet" | "floatvault";
   customerPhone: string;
   customerEmail?: string | null;
   bundleId: mongoose.Types.ObjectId;
@@ -17,6 +17,9 @@ export type Order = {
   paystackAmountGhs?: number | null;
   status: "pending_payment" | "paid" | "fulfilling" | "completed" | "failed" | "cancelled" | "refunded";
   paystackReference?: string | null;
+  floatvaultReference?: string | null;
+  floatvaultCheckoutUrl?: string | null;
+  floatvaultAmountGhs?: number | null; // pesewas the customer was actually charged
   jaybartTransactionCode?: string | null;
   jaybartError?: string | null;
   paidAt?: Date | null;
@@ -36,7 +39,7 @@ const schema = new mongoose.Schema<Order>(
   {
     reference: { type: String, required: true, unique: true },
     placedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
-    paymentMethod: { type: String, enum: ["paystack", "wallet"], required: true },
+    paymentMethod: { type: String, enum: ["paystack", "wallet", "floatvault"], required: true },
     customerPhone: { type: String, required: true },
     customerEmail: { type: String, default: null },
     bundleId: { type: mongoose.Schema.Types.ObjectId, ref: "Bundle", required: true },
@@ -54,6 +57,9 @@ const schema = new mongoose.Schema<Order>(
       default: "pending_payment",
     },
     paystackReference: { type: String, default: null },
+    floatvaultReference: { type: String, default: null },
+    floatvaultCheckoutUrl: { type: String, default: null },
+    floatvaultAmountGhs: { type: Number, default: null },
     jaybartTransactionCode: { type: String, default: null },
     jaybartError: { type: String, default: null },
     paidAt: { type: Date, default: null },

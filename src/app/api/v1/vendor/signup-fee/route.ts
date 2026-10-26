@@ -4,6 +4,7 @@ import { getAuthUser } from "@/lib/get-auth-user";
 import { createErrorResponse } from "@/lib/errors";
 import { initializeTransaction, generateSignupFeeReference } from "@/lib/paystack";
 import { getSettings } from "@/lib/models/settings";
+import { startHostedCheckout } from "@/lib/floatvault-charge";
 
 export const GET = async () => {
   const user = await getAuthUser();
@@ -63,10 +64,27 @@ export const POST = async (req: Request) => {
       vendorId: user._id,
       reference,
       amountGhs: settings.vendorSignupFeeGhs,
+      channel: settings.paymentMode === "floatvault" ? "floatvault" : "paystack",
       status: "pending",
     });
 
     const origin = new URL(req.url).origin;
+
+    if (settings.paymentMode === "floatvault") {
+      try {
+        const payment = await startHostedCheckout({
+          reference: fee.reference,
+          kind: "signupfee",
+          amountGhs: fee.amountGhs,
+          callbackUrl: `${origin}/vendor/signup-fee?fee=success&ref=${fee.reference}`,
+        });
+        await VendorSignupFeeModel.updateOne({ _id: fee._id }, { floatvaultReference: payment.reference, floatvaultCheckoutUrl: payment.checkoutUrl });
+        return Response.json({ provider: "floatvault", checkoutUrl: payment.checkoutUrl, reference: fee.reference, amountGhs: fee.amountGhs }, { status: 201 });
+      } catch {
+        await VendorSignupFeeModel.updateOne({ _id: fee._id, status: "pending" }, { status: "failed" });
+        return Response.json({ message: "We couldn't start the payment. Please try again." }, { status: 502 });
+      }
+    }
 
     const paystack = await initializeTransaction({
       email: user.email,

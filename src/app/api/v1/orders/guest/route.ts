@@ -8,6 +8,9 @@ import { effectiveBundleName } from "@/lib/bundle-name";
 import { initializeTransaction } from "@/lib/paystack";
 import { getSettings } from "@/lib/models/settings";
 import { calculatePaystackFee } from "@/lib/paystack-fees";
+import { quotePayment } from "@/lib/payments/quote";
+import { startHostedCheckout } from "@/lib/floatvault-charge";
+import { cancelUnpaidOrder } from "@/lib/settlement";
 
 function generateReference(): string {
   const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -20,7 +23,7 @@ function generateReference(): string {
 export const POST = async (req: Request) => {
   try {
     const body = await req.json().catch(() => ({}));
-    const { bundleId, customerPhone, customerEmail } = body;
+    const { bundleId, customerPhone, customerEmail, expectedTotalGhs } = body;
 
     if (!bundleId || typeof bundleId !== "string") {
       return Response.json({ message: "bundleId is required" }, { status: 400 });
@@ -46,7 +49,31 @@ export const POST = async (req: Request) => {
       return Response.json({ message: "This network is currently unavailable" }, { status: 400 });
     }
 
-    const fee = calculatePaystackFee(bundle.priceGhs, settings.passPaystackFeesToCustomers);
+    const useFloatVault = settings.paymentMode === "floatvault";
+
+    let fee: { baseAmountGhs: number; processingFeeGhs: number; totalPayableGhs: number; processingFeeRateBps: number };
+    if (useFloatVault) {
+      try {
+        const quote = await quotePayment(bundle.priceGhs, settings);
+        fee = {
+          baseAmountGhs: quote.baseAmountGhs,
+          processingFeeGhs: quote.processingFeeGhs,
+          totalPayableGhs: quote.totalPayableGhs,
+          processingFeeRateBps: quote.feeRateBps,
+        };
+      } catch (err) {
+        log("floatvault quote failed %o", err)
+        return Response.json({ message: "We couldn't price this order right now. Please try again shortly." }, { status: 502 });
+      }
+      if (typeof expectedTotalGhs === "number" && expectedTotalGhs !== fee.totalPayableGhs) {
+        return Response.json(
+          { message: "The price changed. Please review the new total and try again.", totalPayableGhs: fee.totalPayableGhs },
+          { status: 409 },
+        );
+      }
+    } else {
+      fee = calculatePaystackFee(bundle.priceGhs, settings.passPaystackFeesToCustomers);
+    }
 
     let reference = generateReference();
     for (let i = 0; i < 4; i++) {
@@ -57,7 +84,7 @@ export const POST = async (req: Request) => {
     const order = await OrderModel.create({
       reference,
       placedBy: null,
-      paymentMethod: "paystack",
+      paymentMethod: useFloatVault ? "floatvault" : "paystack",
       customerPhone: customerPhone.replace(/\s/g, ""),
       customerEmail: customerEmail?.trim() || null,
       bundleId: bundle._id,
@@ -74,6 +101,36 @@ export const POST = async (req: Request) => {
     log("order created reference=%s", order.reference)
 
     const origin = new URL(req.url).origin;
+
+    if (useFloatVault) {
+      try {
+        const payment = await startHostedCheckout({
+          reference: order.reference,
+          kind: "order",
+          amountGhs: bundle.priceGhs,
+          callbackUrl: `${origin}/checkout/success?ref=${order.reference}`,
+        });
+        await OrderModel.updateOne({ _id: order._id }, { floatvaultReference: payment.reference, floatvaultCheckoutUrl: payment.checkoutUrl });
+        log("floatvault checkout created reference=%s fvRef=%s", order.reference, payment.reference)
+
+        return Response.json(
+          {
+            reference: order.reference,
+            provider: "floatvault",
+            checkoutUrl: payment.checkoutUrl,
+            amountGhs: order.amountGhs,
+            processingFeeGhs: order.processingFeeGhs ?? 0,
+            totalPaidGhs: order.totalPaidGhs ?? order.amountGhs,
+          },
+          { status: 201 }
+        );
+      } catch (err) {
+        log("floatvault checkout failed reference=%s err=%o", order.reference, err)
+        await cancelUnpaidOrder(order.reference, "Payment could not be started");
+        return Response.json({ message: "We couldn't start the payment. Please try again." }, { status: 502 });
+      }
+    }
+
     const email = customerEmail?.trim() || "guest@princekventures.com";
 
     const paystack = await initializeTransaction({

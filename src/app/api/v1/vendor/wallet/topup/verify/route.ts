@@ -5,6 +5,7 @@ import { UserModel } from "@/lib/models/user";
 import { getAuthUser } from "@/lib/get-auth-user";
 import { createErrorResponse } from "@/lib/errors";
 import { verifyTransaction } from "@/lib/paystack";
+import { syncFloatVaultTopup } from "@/lib/floatvault-sync";
 import mongoose from "mongoose";
 
 export const POST = async (req: Request) => {
@@ -33,6 +34,22 @@ export const POST = async (req: Request) => {
 
     if (topup.status !== "pending") {
       return Response.json({ alreadyProcessed: true, status: topup.status });
+    }
+
+    if (topup.channel === "floatvault") {
+      const result = await syncFloatVaultTopup(reference);
+      if (result.status === "success") {
+        const refreshed = await UserModel.findById(topup.vendorId).select("walletBalance").lean();
+        return Response.json({
+          credited: true,
+          amountGhs: topup.amountGhs,
+          processingFeeGhs: topup.processingFeeGhs ?? 0,
+          totalPaidGhs: topup.totalPaidGhs ?? topup.amountGhs,
+          newBalance: refreshed?.walletBalance ?? 0,
+        });
+      }
+      if (result.status === "failed") return Response.json({ alreadyProcessed: true, status: "failed" });
+      return Response.json({ credited: false, checkoutUrl: topup.floatvaultCheckoutUrl ?? null, paystackStatus: "pending" });
     }
 
     const paystackResult = await verifyTransaction(reference);

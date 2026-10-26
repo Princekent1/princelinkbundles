@@ -10,7 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { getBundles, getMe, getPaymentSettings, createGuestOrder, createVendorOrder } from "@/api";
+import { getBundles, getMe, getPaymentSettings, getPaymentQuote, createGuestOrder, createVendorOrder } from "@/api";
+import { useQueryClient } from "@tanstack/react-query";
 import { VendorFlowBar } from "@/components/ui/vendor-flow-bar";
 import { ghsp } from "@/lib/data";
 import { calculatePaystackFee } from "@/lib/paystack-fees";
@@ -51,24 +52,52 @@ function CheckoutContent() {
     ? (isVendor && bundle.vendorPriceGhs != null ? bundle.vendorPriceGhs : bundle.priceGhs)
     : 0;
   const canAfford = isVendor && bundle ? walletBalance >= bundlePrice : false;
-  const fee = bundle
-    ? calculatePaystackFee(
-        bundlePrice,
-        !isVendor && (paymentSettings?.passPaystackFeesToCustomers ?? false),
-        paymentSettings?.paystackFeeRateBps
-      )
-    : null;
+  const queryClient = useQueryClient();
+  const [redirecting, setRedirecting] = useState(false);
+  const useFloatVault = !isVendor && paymentSettings?.paymentMode === "floatvault";
+
+  const { data: floatvaultQuote, isError: quoteFailed } = useQuery({
+    queryKey: getPaymentQuote.key({ bundleId }),
+    queryFn: () => getPaymentQuote.fn({ bundleId }),
+    enabled: useFloatVault && Boolean(bundle),
+    retry: false,
+    staleTime: 30_000,
+  });
+
+  const fee = useFloatVault
+    ? floatvaultQuote
+      ? {
+          baseAmountGhs: floatvaultQuote.baseAmountGhs,
+          processingFeeGhs: floatvaultQuote.processingFeeGhs,
+          totalPayableGhs: floatvaultQuote.totalPayableGhs,
+        }
+      : null
+    : bundle
+      ? calculatePaystackFee(
+          bundlePrice,
+          !isVendor && (paymentSettings?.passPaystackFeesToCustomers ?? false),
+          paymentSettings?.paystackFeeRateBps
+        )
+      : null;
+  const feeLabel = useFloatVault ? "Processing fee" : "Paystack fee";
 
   const { mutate: submitGuestOrder, isPending: guestPending } = useMutation({
     mutationFn: () => createGuestOrder.fn({
       bundleId: bundle!._id,
       customerPhone: "0" + phone.replace(/\D/g, "").slice(-9),
       customerEmail: email.trim() || undefined,
+      ...(useFloatVault ? { expectedTotalGhs: floatvaultQuote?.totalPayableGhs } : {}),
     }),
     onSuccess: (data) => {
-      router.push(data.paystackUrl);
+      if (data.checkoutUrl) {
+        setRedirecting(true);
+        window.location.assign(data.checkoutUrl);
+        return;
+      }
+      if (data.paystackUrl) router.push(data.paystackUrl);
     },
     onError: (err: { message: string }) => {
+      if (useFloatVault) queryClient.invalidateQueries({ queryKey: getPaymentQuote.key({ bundleId }) });
       toast.error(err.message ?? "Failed to create order");
     },
   });
@@ -94,6 +123,7 @@ function CheckoutContent() {
     const confirmClean = confirm.replace(/\D/g, "");
     if (!/^0\d{9}$/.test(clean)) return "Enter a valid 10-digit Ghana phone number";
     if (clean !== confirmClean) return "Phone numbers don't match";
+    if (useFloatVault && !floatvaultQuote) return "We couldn't price this order yet. Please try again in a moment";
     return null;
   }
 
@@ -107,7 +137,7 @@ function CheckoutContent() {
     }
   }
 
-  const isPending = guestPending || vendorPending;
+  const isPending = guestPending || vendorPending || redirecting;
 
   return (
     <div className="min-h-screen bg-[var(--ink-50)]">
@@ -211,12 +241,12 @@ function CheckoutContent() {
             <div className="bh-display text-[30px]">{fee ? ghsp(fee.totalPayableGhs) : "—"}</div>
             {fee && fee.processingFeeGhs > 0 && (
               <div className="mt-1 text-xs text-[var(--ink-500)]">
-                Bundle {ghsp(fee.baseAmountGhs)} + Paystack fee {ghsp(fee.processingFeeGhs)}
+                Bundle {ghsp(fee.baseAmountGhs)} + {feeLabel} {ghsp(fee.processingFeeGhs)}
               </div>
             )}
           </div>
           <div className="flex items-center gap-1.5 text-xs text-[var(--ink-500)]">
-            <Icon name="shield" size={14} /> {authLoading ? "Checking account" : isVendor ? "Wallet payment" : "Paystack secured"}
+            <Icon name="shield" size={14} /> {authLoading ? "Checking account" : isVendor ? "Wallet payment" : useFloatVault ? "FloatVault secured" : "Paystack secured"}
           </div>
         </div>
       </div>
@@ -225,7 +255,7 @@ function CheckoutContent() {
         <div className="w-full max-w-[448px]">
           <Button
             onClick={handleSubmit}
-            disabled={isPending || authLoading || bundlesLoading || !bundle || bundleUnavailable || (isVendor && !canAfford)}
+            disabled={isPending || authLoading || bundlesLoading || !bundle || bundleUnavailable || (isVendor && !canAfford) || (useFloatVault && !floatvaultQuote)}
             className="w-full rounded-full px-7 py-4 h-auto text-base font-semibold gap-2"
           >
             {isPending
@@ -243,7 +273,9 @@ function CheckoutContent() {
           </Button>
           {!authLoading && !isVendor && (
             <div className="text-center mt-2 text-[11px] text-[var(--ink-500)]">
-              You&apos;ll be redirected to Paystack&apos;s secure checkout.
+              {useFloatVault
+                ? "You'll choose your network and approve the payment on FloatVault's secure page."
+                : "You'll be redirected to Paystack's secure checkout."}
             </div>
           )}
         </div>

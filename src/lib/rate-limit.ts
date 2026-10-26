@@ -26,6 +26,7 @@ function createRateLimiter(max: number, windowMs: number) {
 export const loginLimiter = createRateLimiter(5, 15 * 60 * 1000);
 export const signupLimiter = createRateLimiter(3, 60 * 60 * 1000);
 export const jaybartSyncLimiter = createRateLimiter(10, 60 * 1000);
+export const paymentQuoteLimiter = createRateLimiter(30, 60 * 1000);
 
 export function getIp(req: NextRequest): string {
   return (
