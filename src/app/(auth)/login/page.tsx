@@ -35,11 +35,7 @@ export default function LoginPage() {
         toast.success(<ToastMessage title="Login Successful!" />);
         router.push("/admin/dashboard");
       } else if (data.user.status === "pending") {
-        if (data.signupFeeRequired && data.signupFeeStatus !== "success") {
-          router.push("/vendor/signup-fee");
-        } else {
-          router.push("/pending");
-        }
+        router.push("/vendor/signup-fee");
       } else {
         toast.success(<ToastMessage title="Login Successful!" />);
         router.push("/vendor/dashboard");

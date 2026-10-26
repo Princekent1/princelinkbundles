@@ -5,6 +5,8 @@ import { createErrorResponse } from "@/lib/errors";
 import { initializeTransaction, generateSignupFeeReference } from "@/lib/paystack";
 import { getSettings } from "@/lib/models/settings";
 import { startHostedCheckout } from "@/lib/floatvault-charge";
+import { syncSignupFee } from "@/lib/signup-fee-sync";
+import { failSignupFee } from "@/lib/settlement";
 
 export const GET = async () => {
   const user = await getAuthUser();
@@ -50,8 +52,13 @@ export const POST = async (req: Request) => {
     }
 
     const alreadyPaid = await VendorSignupFeeModel.exists({ vendorId: user._id, status: "success" });
-    if (alreadyPaid) {
-      return Response.json({ message: "Signup fee already paid" }, { status: 400 });
+    if (alreadyPaid) return Response.json({ alreadyPaid: true });
+
+    const previous = await getLatestSignupFee(user._id);
+    if (previous?.status === "pending") {
+      const synced = await syncSignupFee(previous);
+      if (synced.status === "success") return Response.json({ alreadyPaid: true });
+      await failSignupFee(previous.reference);
     }
 
     let reference = generateSignupFeeReference();

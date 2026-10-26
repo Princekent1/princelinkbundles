@@ -37,8 +37,8 @@ export default function SignupPage() {
         toast.success(<ToastMessage title="Sign up successful!" description="One more step — pay the signup fee." />);
         router.push("/vendor/signup-fee");
       } else {
-        toast.success(<ToastMessage title="Sign up successful!" />);
-        router.push("/pending");
+        toast.success(<ToastMessage title="Sign up successful!" description="Your application is with an admin for review." />);
+        router.push("/vendor/signup-fee");
       }
     },
     onError: (error: StrippedError) => {

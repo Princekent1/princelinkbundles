@@ -142,7 +142,7 @@ async function handleSignupFeeFailed(reference: string) {
 
 async function handleSignupFeeSuccess(reference: string, paystackAmountGhs: number | null) {
   const fee = await VendorSignupFeeModel.findOneAndUpdate(
-    { reference, status: "pending" },
+    { reference, status: { $in: ["pending", "failed"] } },
     {
       status: "success",
       paystackReference: reference,

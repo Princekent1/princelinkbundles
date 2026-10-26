@@ -3,9 +3,8 @@ import { User, UserModel } from "@/lib/models/user";
 import { getSettings } from "@/lib/models/settings";
 import connectMongo from "@/lib/mongo";
 import { signupLimiter, getIp } from "@/lib/rate-limit";
-import { generateToken, type TokenPayload } from "@/lib/jwt";
+import { setAuthCookie } from "@/lib/auth-cookie";
 import { NextRequest } from "next/server";
-import { cookies } from "next/headers";
 import bcrypt from "bcryptjs";
 import z from "zod";
 
@@ -78,27 +77,15 @@ export const POST = async (request: NextRequest) => {
     const createdUser = await UserModel.create(payload);
     const autoApproved = !feePaymentRequired && settings.autoApproveVendors;
 
-    if (feePaymentRequired || autoApproved) {
-      const tokenPayload: TokenPayload = {
-        _id: createdUser._id.toString(),
-        email: createdUser.email,
-        role: createdUser.role ?? "vendor",
-        status: createdUser.status ?? "pending",
-        businessName: createdUser.businessName,
-      };
-      const token = await generateToken(tokenPayload);
-      const cookieStore = await cookies();
-      cookieStore.set("auth_token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: 60 * 60 * 24 * 7,
-        path: "/",
-      });
-      return Response.json({ message: "success", autoApproved, feePaymentRequired });
-    }
+    await setAuthCookie({
+      _id: createdUser._id.toString(),
+      email: createdUser.email,
+      role: createdUser.role ?? "vendor",
+      status: createdUser.status ?? "pending",
+      businessName: createdUser.businessName,
+    });
 
-    return Response.json({ message: "success" });
+    return Response.json({ message: "success", autoApproved, feePaymentRequired });
   } catch (error) {
     return createErrorResponse("SomethingWentWrong");
   }

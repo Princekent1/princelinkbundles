@@ -3,9 +3,7 @@ import { VendorSignupFeeModel } from "@/lib/models/vendor-signup-fee";
 import { UserModel } from "@/lib/models/user";
 import { getAuthUser } from "@/lib/get-auth-user";
 import { createErrorResponse } from "@/lib/errors";
-import { verifyTransaction } from "@/lib/paystack";
-import { getSettings } from "@/lib/models/settings";
-import { syncFloatVaultSignupFee } from "@/lib/floatvault-sync";
+import { syncSignupFee } from "@/lib/signup-fee-sync";
 import mongoose from "mongoose";
 
 export const POST = async (req: Request) => {
@@ -36,44 +34,20 @@ export const POST = async (req: Request) => {
       return Response.json({ alreadyProcessed: true, status: fee.status });
     }
 
-    if (fee.channel === "floatvault") {
-      const result = await syncFloatVaultSignupFee(reference);
-      if (result.status === "success") {
-        const user = await UserModel.findById(fee.vendorId).select("status").lean();
-        return Response.json({ paid: true, approved: user?.status === "approved" });
-      }
-      if (result.status === "failed") return Response.json({ alreadyProcessed: true, status: "failed" });
-      return Response.json({ paid: false, checkoutUrl: fee.floatvaultCheckoutUrl ?? null, paystackStatus: "pending" });
+    const result = await syncSignupFee(fee);
+
+    if (result.status === "failed") return Response.json({ alreadyProcessed: true, status: "failed" });
+
+    if (result.status === "success") {
+      const vendor = await UserModel.findById(fee.vendorId).select("status").lean();
+      return Response.json({ paid: true, approved: vendor?.status === "approved" });
     }
 
-    const paystackResult = await verifyTransaction(reference);
-
-    if (paystackResult.status !== "success") {
-      return Response.json({ paid: false, paystackStatus: paystackResult.status });
-    }
-
-    const claimed = await VendorSignupFeeModel.findOneAndUpdate(
-      { _id: fee._id, status: "pending" },
-      {
-        status: "success",
-        paidAt: new Date(),
-        paystackReference: reference,
-        paystackAmountGhs: paystackResult.amount,
-      }
-    );
-
-    if (!claimed) {
-      return Response.json({ alreadyProcessed: true, status: "success" });
-    }
-
-    const settings = await getSettings();
-    let approved = false;
-    if (settings.autoApproveVendors) {
-      await UserModel.findByIdAndUpdate(fee.vendorId, { status: "approved", approvedAt: new Date() });
-      approved = true;
-    }
-
-    return Response.json({ paid: true, approved });
+    return Response.json({
+      paid: false,
+      checkoutUrl: fee.floatvaultCheckoutUrl ?? null,
+      paystackStatus: result.providerStatus ?? "pending",
+    });
   } catch {
     return createErrorResponse("SomethingWentWrong");
   }

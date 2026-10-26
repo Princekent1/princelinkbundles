@@ -34,23 +34,22 @@ export function proxy(req: NextRequest) {
   }
 
   if (pathname === "/pending") {
-    if (!s) return NextResponse.next();
-    if (s.role === "vendor" && s.status === "pending") return NextResponse.next();
+    if (!s) return to(req, "/login");
     if (s.role === "admin") return to(req, "/admin/dashboard");
-    return to(req, "/vendor/dashboard");
+    return to(req, s.status === "pending" ? "/vendor/signup-fee" : "/vendor/dashboard");
   }
 
   if (pathname.startsWith("/admin")) {
     if (!s) return to(req, "/login");
     if (s.role === "admin") return NextResponse.next();
-    return s.status === "pending" ? to(req, "/pending") : to(req, "/vendor/dashboard");
+    return s.status === "pending" ? to(req, "/vendor/signup-fee") : to(req, "/vendor/dashboard");
   }
 
   if (pathname.startsWith("/vendor")) {
     if (!s) return to(req, "/login");
     if (s.role === "admin") return to(req, "/admin/dashboard");
     if (pathname === "/vendor/signup-fee") return NextResponse.next();
-    if (s.status !== "approved") return to(req, "/pending");
+    if (s.status !== "approved") return to(req, "/vendor/signup-fee");
     return NextResponse.next();
   }
 

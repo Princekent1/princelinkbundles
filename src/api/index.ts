@@ -184,6 +184,17 @@ export const logout = {
   },
 };
 
+export const refreshSession = {
+  fn: async (): Promise<{ message: string; user: TokenPayload }> => {
+    try {
+      const res = await apiClient.post("/api/v1/auth/refresh");
+      return res.data;
+    } catch (error) {
+      return throwError(error as ApiError);
+    }
+  },
+};
+
 export const login = {
   key: ["login"],
   fn: async (data: LoginFields): Promise<{ message: string; user: TokenPayload; signupFeeRequired: boolean; signupFeeStatus: SignupFeeStatus }> => {
@@ -816,7 +827,7 @@ export const getSignupFeeStatus = {
 };
 
 export const initSignupFee = {
-  fn: async (): Promise<{ paystackUrl?: string; checkoutUrl?: string; provider?: "floatvault"; reference: string; amountGhs: number }> => {
+  fn: async (): Promise<{ alreadyPaid: true } | { alreadyPaid?: undefined; paystackUrl?: string; checkoutUrl?: string; provider?: "floatvault"; reference: string; amountGhs: number }> => {
     try {
       const res = await apiClient.post("/api/v1/vendor/signup-fee");
       return res.data;

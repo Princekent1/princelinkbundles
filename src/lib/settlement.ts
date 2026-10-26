@@ -75,7 +75,7 @@ export async function failTopup(reference: string) {
 
 export async function settleSignupFeePaid(reference: string, providerFields: Record<string, unknown> = {}) {
   const fee = await VendorSignupFeeModel.findOneAndUpdate(
-    { reference, status: "pending" },
+    { reference, status: { $in: ["pending", "failed"] } },
     { status: "success", paidAt: new Date(), ...providerFields },
     { new: true },
   );
