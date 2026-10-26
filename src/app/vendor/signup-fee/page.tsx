@@ -229,7 +229,7 @@ function SignupFeeContent() {
 
             <Card className="p-4 gap-0 rounded-[14px] border-[var(--ink-200)] bg-[var(--ink-100)] text-[13px] text-[var(--ink-600)] leading-relaxed text-left mb-7">
               <div className="font-semibold text-[var(--ink-900)] mb-1.5">What happens next?</div>
-              <ol className="m-0 pl-[18px] flex flex-col gap-1.5">
+              <ol className="m-0 pl-[18px] list-decimal flex flex-col gap-1.5">
                 <li>The admin reviews your application, usually within 24 hours.</li>
                 <li>Once approved, you&apos;re taken to your dashboard automatically, or just sign in later.</li>
                 <li>Top up your wallet and start placing orders immediately.</li>
